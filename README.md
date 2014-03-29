@@ -1,4 +1,5 @@
-JSC
+JSC - Java Scientific Calculator
 ===
 
-Java Scientific Calculator
+TODO:
+-equations

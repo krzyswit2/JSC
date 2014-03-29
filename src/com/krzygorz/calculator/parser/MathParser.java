@@ -1,20 +1,3 @@
-/*
-    Java Scientific Calculator
-    Copyright (C) 2014  krzygorz
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.krzygorz.calculator.parser;
 
 import java.util.Vector;
@@ -22,6 +5,7 @@ import java.util.Vector;
 import com.krzygorz.calculator.logic.Addition;
 import com.krzygorz.calculator.logic.Division;
 import com.krzygorz.calculator.logic.Equation;
+import com.krzygorz.calculator.logic.Exponentiation;
 import com.krzygorz.calculator.logic.ExpressionPart;
 import com.krzygorz.calculator.logic.Fraction;
 import com.krzygorz.calculator.logic.Multiplication;
@@ -53,7 +37,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 		if(a.equals(" ")){
 			return false;
 		}
-		if(this.getCharType(a.charAt(a.length() - 1)) != getCharType(b)){
+		if(this.getCharType(a.charAt(a.length() - 1)) != getCharType(b)){//one token can have only characters at the same type
 			return false;
 		}
 		return true;
@@ -129,7 +113,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 		}
 
 		ExpressionPart returnVal = null;
-		System.out.println("amount of tokens: " + input.size());
+		System.out.println("amount of tokens: " + input.size());//I'm working on new parser, i don't like the way current one is functioning
 		
 		/*
 		//int bracketLevel = 0;
@@ -221,7 +205,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 		
 		String currentOp = "";
 		int lastOperatorPos = 0;
-		for(int k = 0; k <= 5; k++){
+		for(int k = 0; k <= 5; k++){//look only at operators at lowest priority, then ones higher priority
 			Vector<Token> tokensToAdd = new Vector<Token>();
 			System.out.println("searching for operators with priority: " + k);
 			if(!currentOp.equals("")){
@@ -235,7 +219,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 				bracketFlag = true;
 				for(int j = 0; j < i; j++){
 					Token currToken = input.get(j);
-					if(currToken.getToken().equals("(")){
+					if(currToken.getToken().equals("(")){//if thera are brackets surronding expression, ignore them
 						tmpBracketLevel ++;
 					}
 					if(currToken.getToken().equals(")")){
@@ -253,7 +237,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 
 			for(; i >= 0; i--){//TODO daje odwrotna kolejnosc niz wpisane(nie mozna )
 				Token currToken = input.get(i);
-				tokensToAdd.add(currToken);
+				tokensToAdd.add(currToken);//tokens that are between last operator and next one(useful in addition/multiplications)
 				if(currToken.getToken().equals(")")){
 					bracketLevel ++;
 				}
@@ -332,6 +316,15 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 									returnValTmp.setDividend(parseTokens(firstPart));
 									System.out.println("[/]part 2");
 									returnValTmp.setDivisor(parseTokens(secondPart));
+									returnVal = returnValTmp;
+								}
+								if(currentOp.equals("^")){
+									Exponentiation returnValTmp = new Exponentiation();
+
+									System.out.println("[^]part 1");
+									returnValTmp.setBase(parseTokens(firstPart));
+									System.out.println("[^]part 2");
+									returnValTmp.setExponent(parseTokens(secondPart));
 									returnVal = returnValTmp;
 								}
 								if(currentOp.equals("=")){
@@ -414,6 +407,14 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 		}
 		return returnVal;
 	}
+	
+	/*private ExpressionPart addTokensToSide(ExpressionPart op, bool left){
+		if(left){
+			
+		}else{
+			
+		}
+	}*/
 
 	public ExpressionPart parseString(String input) throws Exception{
 		Vector<Token> tokens = splitToTokens(input);

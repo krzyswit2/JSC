@@ -52,7 +52,7 @@ public class Variable implements ExpressionPart{
 	}
 	@Override
 	public boolean matches(ExpressionPart arg) {
-		if(arg instanceof Variable && (((Variable)arg).getName() == this.getName())){
+		if(arg instanceof Variable && (((Variable)arg).getName().equals(this.getName()))){
 			return true;
 		}
 		return false;

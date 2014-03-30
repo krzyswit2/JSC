@@ -118,6 +118,9 @@ public class Addition implements ExpressionPart{
 			//addend2Converted.setDenominator(new Multiplication(new Division(lcp, addend2Converted.getDenominator()), addend2Converted.getDenominator()));
 			return new Fraction(new Addition(addend1Converted.getNumerator(), addend2Converted.getNumerator()), addend1Converted.getDenominator()).simplyfy();
 		}
+		if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
+			return new Multiplication(new Number(2), addend1);
+		}
 		return null;
 	}
 	
@@ -203,7 +206,7 @@ public class Addition implements ExpressionPart{
 	@Override
 	public boolean matches(ExpressionPart arg) {
 		if(arg instanceof Addition){
-			Vector<ExpressionPart> left = addends;//returns true even, if addends aren't in the same order
+			Vector<ExpressionPart> left = addends;
 			Addition argConverted = (Addition)arg;
 			for(ExpressionPart i : argConverted.addends){
 				boolean hasMatchingArg = false;

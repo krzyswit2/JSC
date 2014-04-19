@@ -200,7 +200,7 @@ public class Multiplication implements ExpressionPart{
 	@Override
 	public boolean matches(ExpressionPart arg) {
 		if(arg instanceof Multiplication){
-			Vector<ExpressionPart> left = factors;
+			Vector<ExpressionPart> left = new Vector<ExpressionPart>(factors);
 			Multiplication argConverted = (Multiplication)arg;
 			for(ExpressionPart i : argConverted.factors){
 				boolean hasMatchingArg = false;

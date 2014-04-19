@@ -49,7 +49,7 @@ public class Addition implements ExpressionPart{
 	public ExpressionPart simplyfy() {
 		if(addends != null){
 			if(addends.size() > 1){
-				Vector<ExpressionPart> toAdd = addends;
+				Vector<ExpressionPart> toAdd = new Vector<ExpressionPart>(addends);
 				Vector<ExpressionPart> result = new Vector<ExpressionPart>();
 				while(toAdd.size() != 0){
 					ExpressionPart tmp = null;
@@ -151,7 +151,7 @@ public class Addition implements ExpressionPart{
 		if(isLast){
 			if(addends != null){
 				if(addends.size() > 1){
-					Vector<ExpressionPart> toAdd = addends;
+					Vector<ExpressionPart> toAdd = new Vector<ExpressionPart>(addends);
 					Vector<ExpressionPart> result = new Vector<ExpressionPart>();
 					while(toAdd.size() != 0){
 						ExpressionPart tmp = null;
@@ -206,7 +206,7 @@ public class Addition implements ExpressionPart{
 	@Override
 	public boolean matches(ExpressionPart arg) {
 		if(arg instanceof Addition){
-			Vector<ExpressionPart> left = addends;
+			Vector<ExpressionPart> left = new Vector<ExpressionPart>(addends);
 			Addition argConverted = (Addition)arg;
 			for(ExpressionPart i : argConverted.addends){
 				boolean hasMatchingArg = false;

@@ -48,7 +48,7 @@ public class Main {
 			String toOutput = "";
 			int i = 0;
 			
-			while(parsedInput.canBeSimplified() && i < 100){
+			while(parsedInput.canBeSimplified() && i < 5){
 				toOutput = toOutput.concat(parsedInput.toString());
 				toOutput = toOutput.concat(" = "); 
 				parsedInput = parsedInput.nextStepToSimplyfy();

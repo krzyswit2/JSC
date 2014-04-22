@@ -19,6 +19,7 @@ package com.krzygorz.calculator.logic;
 
 import java.util.Vector;
 
+import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class Multiplication implements ExpressionPart{
@@ -96,23 +97,26 @@ public class Multiplication implements ExpressionPart{
 
 			return new Number(addend1Converted.getValue() * addend2Converted.getValue());
 		}
+		
+		
+		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+			if(factor1 instanceof Number && factor2 instanceof Division){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
+				Number factor1Converted = (Number)factor1;
+				Division factor2Converted = (Division)factor2;
 
-		if(factor1 instanceof Number && factor2 instanceof Fraction){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
-			Number factor1Converted = (Number)factor1;
-			Fraction factor2Converted = (Fraction)factor2;
-
-			ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDenominator()).simplyfy();
-			return new Fraction(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getNumerator()), new Division(factor2Converted.getDenominator(), gcd)).simplyfy();
-		}
-		if(factor1 instanceof Fraction && factor2 instanceof Number){
-			return new Multiplication(factor2, factor1).simplyfy();
-		}
-		if(factor1 instanceof Fraction && factor2 instanceof Fraction){
-			Fraction factor1Converted = (Fraction)factor1;
-			Fraction factor2Converted = (Fraction)factor2;
-			ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getNumerator(), factor2Converted.getDenominator()).simplyfy();
-			ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getNumerator(), factor1Converted.getDenominator()).simplyfy();
-			return new Fraction(new Multiplication(new Division(factor1Converted.getNumerator(), gcd1), new Division(factor2Converted.getNumerator(), gcd2)), new Multiplication(new Division(factor1Converted.getDenominator(), gcd2),new Division(factor2Converted.getDenominator(), gcd1))).simplyfy();
+				ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getDividend()), new Division(factor2Converted.getDivisor(), gcd)).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Number){
+				return new Multiplication(factor2, factor1).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Division){
+				Division factor1Converted = (Division)factor1;
+				Division factor2Converted = (Division)factor2;
+				ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getDividend(), factor2Converted.getDivisor()).simplyfy();
+				ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getDividend(), factor1Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted.getDividend(), gcd1), new Division(factor2Converted.getDividend(), gcd2)), new Multiplication(new Division(factor1Converted.getDivisor(), gcd2),new Division(factor2Converted.getDivisor(), gcd1))).simplyfy();
+			}
 		}
 		return null;
 	}

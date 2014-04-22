@@ -25,7 +25,7 @@ import com.krzygorz.calculator.logic.Division;
 import com.krzygorz.calculator.logic.Equation;
 import com.krzygorz.calculator.logic.Exponentiation;
 import com.krzygorz.calculator.logic.ExpressionPart;
-import com.krzygorz.calculator.logic.Fraction;
+//import com.krzygorz.calculator.logic.Fraction;
 import com.krzygorz.calculator.logic.Multiplication;
 import com.krzygorz.calculator.logic.Number;
 import com.krzygorz.calculator.logic.Substraction;
@@ -287,7 +287,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 							}
 							if(returnVal == null){//parse diffrent operators
 								System.out.println("first operator");
-								if(currentOp.equals("\\")){
+								/*if(currentOp.equals("\\")){
 									Fraction returnValTmp = new Fraction();
 
 									System.out.println("[\\]part 1");
@@ -295,7 +295,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 									System.out.println("[\\]part 2");
 									returnValTmp.setDenominator(parseTokens(secondPart));
 									returnVal = returnValTmp;
-								}
+								}*/
 								if(currentOp.equals("+")){
 									Addition returnValTmp = new Addition();
 

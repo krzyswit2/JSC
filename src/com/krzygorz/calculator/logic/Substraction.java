@@ -17,6 +17,7 @@
  */
 package com.krzygorz.calculator.logic;
 
+import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class Substraction implements ExpressionPart{
@@ -54,31 +55,33 @@ public class Substraction implements ExpressionPart{
 			
 			return new Number(minuendConverted.getValue() - subtrahendConverted.getValue());
 		}
-		if((tmpMinuend instanceof Fraction) && (tmpSubtrahend instanceof Number)){
-			Fraction minuendConverted = new Fraction(((Fraction)tmpMinuend).getNumerator(), ((Fraction)tmpMinuend).getDenominator());
-			Number subtrahendConverted = new Number(((Number)tmpSubtrahend).getValue());
-			
-			minuendConverted.setNumerator(new Substraction(minuendConverted.getNumerator(), new Multiplication(subtrahendConverted, minuendConverted.getDenominator())));
-			return minuendConverted.simplyfy();
-		}
-		if((tmpMinuend instanceof Number) && (tmpSubtrahend instanceof Fraction)){
-			Number minuendConverted = new Number(((Number)tmpMinuend).getValue());//TODO konstruktory kopiujace
-			Fraction subtrahendConverted = new Fraction(((Fraction)tmpSubtrahend).getNumerator(), ((Fraction)tmpSubtrahend).getDenominator());
-			
-			subtrahendConverted.setNumerator(new Substraction(new Multiplication(minuendConverted, subtrahendConverted.getDenominator()), subtrahendConverted.getDenominator()));
-			return subtrahendConverted.simplyfy();
-		}
-		if(minuend instanceof Fraction && subtrahend instanceof Fraction){
-			Fraction minuendConverted = new Fraction(((Fraction)tmpMinuend).getNumerator(), ((Fraction)tmpMinuend).getDenominator());
-			Fraction subtrahendConverted = new Fraction(((Fraction)tmpSubtrahend).getNumerator(), ((Fraction)tmpSubtrahend).getDenominator());
-			ExpressionPart lcp = new LeastCommonMultiple(minuendConverted.getDenominator(), subtrahendConverted.getDenominator());
-			
-			minuendConverted.setNumerator(new Multiplication(new Division(lcp, minuendConverted.getDenominator()), minuendConverted.getNumerator()));
-			minuendConverted.setDenominator(new Multiplication(new Division(lcp, minuendConverted.getDenominator()), minuendConverted.getDenominator()));
-			subtrahendConverted.setNumerator(new Multiplication(new Division(lcp, subtrahendConverted.getDenominator()), subtrahendConverted.getNumerator()));
-			subtrahendConverted.setDenominator(new Multiplication(new Division(lcp, subtrahendConverted.getDenominator()), subtrahendConverted.getDenominator()));
-			
-			return new Fraction(new Substraction(minuendConverted.getNumerator(), subtrahendConverted.getNumerator()), minuendConverted.getDenominator()).simplyfy();
+		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+			if((tmpMinuend instanceof Division) && (tmpSubtrahend instanceof Number)){
+				Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
+				Number subtrahendConverted = new Number(((Number)tmpSubtrahend).getValue());
+
+				minuendConverted.setDividend(new Substraction(minuendConverted.getDividend(), new Multiplication(subtrahendConverted, minuendConverted.getDivisor())));
+				return minuendConverted.simplyfy();
+			}
+			if((tmpMinuend instanceof Number) && (tmpSubtrahend instanceof Division)){
+				Number minuendConverted = new Number(((Number)tmpMinuend).getValue());//TODO konstruktory kopiujace
+				Division subtrahendConverted = new Division(((Division)tmpSubtrahend).getDividend(), ((Division)tmpSubtrahend).getDivisor());
+
+				subtrahendConverted.setDividend(new Substraction(new Multiplication(minuendConverted, subtrahendConverted.getDivisor()), subtrahendConverted.getDivisor()));
+				return subtrahendConverted.simplyfy();
+			}
+			if(minuend instanceof Division && subtrahend instanceof Division){
+				Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
+				Division subtrahendConverted = new Division(((Division)tmpSubtrahend).getDividend(), ((Division)tmpSubtrahend).getDivisor());
+				ExpressionPart lcp = new LeastCommonMultiple(minuendConverted.getDivisor(), subtrahendConverted.getDivisor());
+
+				minuendConverted.setDividend(new Multiplication(new Division(lcp, minuendConverted.getDivisor()), minuendConverted.getDividend()));
+				minuendConverted.setDivisor(new Multiplication(new Division(lcp, minuendConverted.getDivisor()), minuendConverted.getDivisor()));
+				subtrahendConverted.setDividend(new Multiplication(new Division(lcp, subtrahendConverted.getDivisor()), subtrahendConverted.getDividend()));
+				subtrahendConverted.setDivisor(new Multiplication(new Division(lcp, subtrahendConverted.getDivisor()), subtrahendConverted.getDivisor()));
+
+				return new Division(new Substraction(minuendConverted.getDividend(), subtrahendConverted.getDividend()), minuendConverted.getDivisor()).simplyfy();
+			}
 		}
 		return new Substraction(tmpMinuend, tmpSubtrahend);
 		
@@ -111,32 +114,33 @@ public class Substraction implements ExpressionPart{
 				
 				return new Number(minuendConverted.getValue() - subtrahendConverted.getValue());
 			}
-			if((minuend instanceof Fraction) && (subtrahend instanceof Number)){
-				Fraction minuendConverted = new Fraction(((Fraction)minuend).getNumerator(), ((Fraction)minuend).getDenominator());
-				Number subtrahendConverted = new Number(((Number)subtrahend).getValue());
-				
-				minuendConverted.setNumerator(new Substraction(minuendConverted.getNumerator(), new Multiplication(subtrahendConverted, minuendConverted.getDenominator())));
-				return minuendConverted;
-			}
-			if((minuend instanceof Number) && (subtrahend instanceof Fraction)){
-				Number minuendConverted = new Number(((Number)minuend).getValue());
-				Fraction subtrahendConverted = new Fraction(((Fraction)subtrahend).getNumerator(), ((Fraction)subtrahend).getDenominator());
-				
-				subtrahendConverted.setNumerator(new Substraction(new Multiplication(minuendConverted, subtrahendConverted.getDenominator()), subtrahendConverted.getNumerator()));
-				return subtrahendConverted;
-			}
-			if(minuend instanceof Fraction && subtrahend instanceof Fraction){
-				Fraction minuendConverted = new Fraction(((Fraction)tmpMinuend).getNumerator(), ((Fraction)tmpMinuend).getDenominator());
-				Fraction subtrahendConverted = new Fraction(((Fraction)tmpSubtrahend).getNumerator(), ((Fraction)tmpSubtrahend).getDenominator());
-				//if(minuendConverted.getDenominator().equals(subtrahendConverted.getDenominator())//TODO sprawdzac, czy ulamki maja taki sam mianownik
-				ExpressionPart lcp = new LeastCommonMultiple(minuendConverted.getDenominator(), subtrahendConverted.getDenominator());
-				
-				minuendConverted.setNumerator(new Multiplication(new Division(lcp, minuendConverted.getDenominator()), minuendConverted.getNumerator()));
-				minuendConverted.setDenominator(new Multiplication(new Division(lcp, minuendConverted.getDenominator()), minuendConverted.getDenominator()));
-				subtrahendConverted.setNumerator(new Multiplication(new Division(lcp, subtrahendConverted.getDenominator()), subtrahendConverted.getNumerator()));
-				subtrahendConverted.setDenominator(new Multiplication(new Division(lcp, subtrahendConverted.getDenominator()), subtrahendConverted.getDenominator()));
-				
-				return new Fraction(new Substraction(minuendConverted.getNumerator(), subtrahendConverted.getNumerator()), minuendConverted.getDenominator());
+			if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+				if((tmpMinuend instanceof Division) && (tmpSubtrahend instanceof Number)){
+					Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
+					Number subtrahendConverted = new Number(((Number)tmpSubtrahend).getValue());
+
+					minuendConverted.setDividend(new Substraction(minuendConverted.getDividend(), new Multiplication(subtrahendConverted, minuendConverted.getDivisor())));
+					return minuendConverted;
+				}
+				if((tmpMinuend instanceof Number) && (tmpSubtrahend instanceof Division)){
+					Number minuendConverted = new Number(((Number)tmpMinuend).getValue());//TODO konstruktory kopiujace
+					Division subtrahendConverted = new Division(((Division)tmpSubtrahend).getDividend(), ((Division)tmpSubtrahend).getDivisor());
+
+					subtrahendConverted.setDividend(new Substraction(new Multiplication(minuendConverted, subtrahendConverted.getDivisor()), subtrahendConverted.getDivisor()));
+					return subtrahendConverted;
+				}
+				if(minuend instanceof Division && subtrahend instanceof Division){
+					Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
+					Division subtrahendConverted = new Division(((Division)tmpSubtrahend).getDividend(), ((Division)tmpSubtrahend).getDivisor());
+					ExpressionPart lcp = new LeastCommonMultiple(minuendConverted.getDivisor(), subtrahendConverted.getDivisor());
+
+					minuendConverted.setDividend(new Multiplication(new Division(lcp, minuendConverted.getDivisor()), minuendConverted.getDividend()));
+					minuendConverted.setDivisor(new Multiplication(new Division(lcp, minuendConverted.getDivisor()), minuendConverted.getDivisor()));
+					subtrahendConverted.setDividend(new Multiplication(new Division(lcp, subtrahendConverted.getDivisor()), subtrahendConverted.getDividend()));
+					subtrahendConverted.setDivisor(new Multiplication(new Division(lcp, subtrahendConverted.getDivisor()), subtrahendConverted.getDivisor()));
+
+					return new Division(new Substraction(minuendConverted.getDividend(), subtrahendConverted.getDividend()), minuendConverted.getDivisor());
+				}
 			}
 		}
 		

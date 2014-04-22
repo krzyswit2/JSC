@@ -19,6 +19,7 @@ package com.krzygorz.calculator.logic;
 
 import java.util.Vector;
 
+import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class Addition implements ExpressionPart{
@@ -96,30 +97,32 @@ public class Addition implements ExpressionPart{
 			
 			return new Number(addend1Converted.getValue() + addend2Converted.getValue());
 		}
-		if(addend1 instanceof Fraction && addend2 instanceof Number){
-			Fraction addend1Converted = new Fraction(((Fraction)addend1).getNumerator(), ((Fraction)addend1).getDenominator());
-			Number addend2Converted = new Number(((Number)addend2).getValue());
-			
-			addend1Converted.setNumerator(new Addition(addend1Converted.getNumerator(), new Multiplication(addend2Converted, addend1Converted.getDenominator())));
-			
-			return addend1Converted.simplyfy();
-		}
-		if(addend1 instanceof Number && addend2 instanceof Fraction){
-			return new Addition(addend2, addend1).simplyfy();
-		}
-		if(addend1 instanceof Fraction && addend2 instanceof Fraction){
-			Fraction addend1Converted = new Fraction(((Fraction)addend1).getNumerator(), ((Fraction)addend1).getDenominator());
-			Fraction addend2Converted = new Fraction(((Fraction)addend2).getNumerator(), ((Fraction)addend2).getDenominator());
-			ExpressionPart lcp = new LeastCommonMultiple(addend1Converted.getDenominator(), addend2Converted.getDenominator());
-			
-			addend1Converted.setNumerator(new Multiplication(new Division(lcp, addend1Converted.getDenominator()), addend1Converted.getNumerator()));
-			addend1Converted.setDenominator(new Multiplication(new Division(lcp, addend1Converted.getDenominator()), addend1Converted.getDenominator()));
-			addend2Converted.setNumerator(new Multiplication(new Division(lcp, addend2Converted.getDenominator()), addend2Converted.getNumerator()));
-			//addend2Converted.setDenominator(new Multiplication(new Division(lcp, addend2Converted.getDenominator()), addend2Converted.getDenominator()));
-			return new Fraction(new Addition(addend1Converted.getNumerator(), addend2Converted.getNumerator()), addend1Converted.getDenominator()).simplyfy();
-		}
-		if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
-			return new Multiplication(new Number(2), addend1);
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(addend1 instanceof Division && addend2 instanceof Number){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Number addend2Converted = new Number(((Number)addend2).getValue());
+
+				addend1Converted.setDividend(new Addition(addend1Converted.getDividend(), new Multiplication(addend2Converted, addend1Converted.getDivisor())));
+
+				return addend1Converted.simplyfy();
+			}
+			if(addend1 instanceof Number && addend2 instanceof Division){
+				return new Addition(addend2, addend1).simplyfy();
+			}
+			if(addend1 instanceof Division && addend2 instanceof Division){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Division addend2Converted = new Division(((Division)addend2).getDividend(), ((Division)addend2).getDivisor());
+				ExpressionPart lcp = new LeastCommonMultiple(addend1Converted.getDivisor(), addend2Converted.getDivisor());
+
+				addend1Converted.setDividend(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDividend()));
+				addend1Converted.setDivisor(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDivisor()));
+				addend2Converted.setDividend(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDividend()));
+				//addend2Converted.setDivisor(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDivisor()));
+				return new Division(new Addition(addend1Converted.getDividend(), addend2Converted.getDividend()), addend1Converted.getDivisor()).simplyfy();
+			}
+			if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
+				return new Multiplication(new Number(2), addend1);
+			}
 		}
 		return null;
 	}

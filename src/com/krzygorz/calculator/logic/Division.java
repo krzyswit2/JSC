@@ -48,6 +48,11 @@ public class Division implements ExpressionPart{
 		if(divisor.canBeSimplified()){
 			tmpDivisor = this.divisor.simplyfy();
 		}
+		
+		if(tmpDivisor.matches(new Number(1))){
+			return tmpDividend;
+		}
+		
 		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
 			if(tmpDividend instanceof Division && tmpDivisor instanceof Number){
 				Division dividendConverted = (Division)tmpDividend;
@@ -83,7 +88,7 @@ public class Division implements ExpressionPart{
 						tmpDivisor = new Division(DivisorConverted, gcd);
 						return new Division(tmpDividend, tmpDivisor).simplyfy();
 					}else{
-						return this;
+						return new Division(tmpDividend, tmpDivisor);
 					}
 				}else{
 					while(!(Operation.isInteger(DividendConverted.getValue()) && Operation.isInteger(DivisorConverted.getValue()))){
@@ -118,6 +123,9 @@ public class Division implements ExpressionPart{
 		ExpressionPart tmpDividend = dividend;
 		ExpressionPart tmpDivisor = divisor;
 		
+		if(tmpDivisor.matches(new Number(1))){
+			return tmpDividend;
+		}
 		
 		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
 			if(tmpDividend instanceof Division && tmpDivisor instanceof Number){
@@ -142,13 +150,17 @@ public class Division implements ExpressionPart{
 				Number DividendConverted = (Number) tmpDividend;
 				Number DivisorConverted = (Number) tmpDivisor;
 				
+				if(Operation.isInteger(DividendConverted.getValue() / DivisorConverted.getValue())){
+					return new Number(DividendConverted.getValue() / DivisorConverted.getValue());
+				}
+				
 				if(Operation.isInteger(DividendConverted.getValue()) && Operation.isInteger(DivisorConverted.getValue())){
 					ExpressionPart gcd = new GreatestCommonDivisor(DividendConverted, DivisorConverted).simplyfy();
 					
 					if(gcd instanceof Number && ((Number)gcd).getValue() > 1){
 						tmpDividend = new Division(DividendConverted, gcd).simplyfy();
 						tmpDivisor = new Division(DivisorConverted, gcd).simplyfy();
-						return new Division(DividendConverted, DivisorConverted);
+						return new Division(tmpDividend, tmpDivisor);
 					}else{
 						return this;
 					}
@@ -184,7 +196,7 @@ public class Division implements ExpressionPart{
 	public String toString(){
 		//String convertedNumerator = numerator.toString();
 		//String convertedDenominator = denominator.toString();
-		return this.dividend.toString().concat("/").concat(this.divisor.toString());
+		return "(".concat(this.dividend.toString()).concat(")").concat("/").concat("(").concat(this.divisor.toString()).concat(")");
 	}
 
 	

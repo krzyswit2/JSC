@@ -55,7 +55,7 @@ public class Substraction implements ExpressionPart{
 			
 			return new Number(minuendConverted.getValue() - subtrahendConverted.getValue());
 		}
-		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
 			if((tmpMinuend instanceof Division) && (tmpSubtrahend instanceof Number)){
 				Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
 				Number subtrahendConverted = new Number(((Number)tmpSubtrahend).getValue());
@@ -64,7 +64,7 @@ public class Substraction implements ExpressionPart{
 				return minuendConverted.simplyfy();
 			}
 			if((tmpMinuend instanceof Number) && (tmpSubtrahend instanceof Division)){
-				Number minuendConverted = new Number(((Number)tmpMinuend).getValue());//TODO konstruktory kopiujace
+				Number minuendConverted = new Number(((Number)tmpMinuend).getValue());
 				Division subtrahendConverted = new Division(((Division)tmpSubtrahend).getDividend(), ((Division)tmpSubtrahend).getDivisor());
 
 				subtrahendConverted.setDividend(new Substraction(new Multiplication(minuendConverted, subtrahendConverted.getDivisor()), subtrahendConverted.getDivisor()));
@@ -82,6 +82,7 @@ public class Substraction implements ExpressionPart{
 
 				return new Division(new Substraction(minuendConverted.getDividend(), subtrahendConverted.getDividend()), minuendConverted.getDivisor()).simplyfy();
 			}
+			
 		}
 		return new Substraction(tmpMinuend, tmpSubtrahend);
 		
@@ -114,7 +115,7 @@ public class Substraction implements ExpressionPart{
 				
 				return new Number(minuendConverted.getValue() - subtrahendConverted.getValue());
 			}
-			if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+			if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
 				if((tmpMinuend instanceof Division) && (tmpSubtrahend instanceof Number)){
 					Division minuendConverted = new Division(((Division)tmpMinuend).getDividend(), ((Division)tmpMinuend).getDivisor());
 					Number subtrahendConverted = new Number(((Number)tmpSubtrahend).getValue());

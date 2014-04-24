@@ -98,8 +98,7 @@ public class Multiplication implements ExpressionPart{
 			return new Number(addend1Converted.getValue() * addend2Converted.getValue());
 		}
 		
-		
-		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
 			if(factor1 instanceof Number && factor2 instanceof Division){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
 				Number factor1Converted = (Number)factor1;
 				Division factor2Converted = (Division)factor2;
@@ -118,6 +117,49 @@ public class Multiplication implements ExpressionPart{
 				return new Division(new Multiplication(new Division(factor1Converted.getDividend(), gcd1), new Division(factor2Converted.getDividend(), gcd2)), new Multiplication(new Division(factor1Converted.getDivisor(), gcd2),new Division(factor2Converted.getDivisor(), gcd1))).simplyfy();
 			}
 		}
+		
+		return null;
+	}
+	private ExpressionPart multiplyTwoArgsSimple(ExpressionPart factor1, ExpressionPart factor2){
+		if(factor1 == null){
+			return factor2;
+		}
+		if(factor2 == null){
+			return factor1;
+		}
+		if(factor1.canBeSimplified()){
+			factor1 = factor1.simplyfy();
+		}
+		if(factor2.canBeSimplified()){
+			factor2 = factor2.simplyfy();
+		}
+		if(factor1 instanceof Number && factor2 instanceof Number){//TODO nie dawac wynikow 1*cos
+			Number addend1Converted = (Number)factor1;
+			Number addend2Converted = (Number)factor2;
+
+			return new Number(addend1Converted.getValue() * addend2Converted.getValue());
+		}
+		
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(factor1 instanceof Number && factor2 instanceof Division){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
+				Number factor1Converted = (Number)factor1;
+				Division factor2Converted = (Division)factor2;
+
+				ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getDividend()), new Division(factor2Converted.getDivisor(), gcd)).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Number){
+				return new Multiplication(factor2, factor1).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Division){
+				Division factor1Converted = (Division)factor1;
+				Division factor2Converted = (Division)factor2;
+				ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getDividend(), factor2Converted.getDivisor()).simplyfy();
+				ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getDividend(), factor1Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted.getDividend(), gcd1), new Division(factor2Converted.getDividend(), gcd2)), new Multiplication(new Division(factor1Converted.getDivisor(), gcd2),new Division(factor2Converted.getDivisor(), gcd1))).simplyfy();
+			}
+		}
+		
 		return null;
 	}
 	
@@ -155,7 +197,7 @@ public class Multiplication implements ExpressionPart{
 						ExpressionPart tmp = null;
 						Vector<ExpressionPart> toMultiplyNext = new Vector<ExpressionPart>();
 						for(ExpressionPart i : toMultiply){
-							ExpressionPart tmp1 = multiplyTwoArgs(tmp, i);
+							ExpressionPart tmp1 = multiplyTwoArgsSimple(tmp, i);
 							if(tmp1 != null){
 								tmp = tmp1;
 							}else{
@@ -177,7 +219,7 @@ public class Multiplication implements ExpressionPart{
 		}else{
 			Multiplication retValue = new Multiplication();
 			for(ExpressionPart tmp : factors){
-				if(!(tmp instanceof Number) && tmp.canBeSimplified()){
+				if(tmp.canBeSimplified()){
 					//System.out.println("next NaN arg: " + tmp);
 					tmp = tmp.nextStepToSimplyfy();
 				}

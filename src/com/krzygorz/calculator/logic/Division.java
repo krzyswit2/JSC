@@ -53,7 +53,7 @@ public class Division implements ExpressionPart{
 			return tmpDividend;
 		}
 		
-		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
 			if(tmpDividend instanceof Division && tmpDivisor instanceof Number){
 				Division dividendConverted = (Division)tmpDividend;
 				Number divisorConverted = (Number)tmpDivisor;
@@ -123,11 +123,24 @@ public class Division implements ExpressionPart{
 		ExpressionPart tmpDividend = dividend;
 		ExpressionPart tmpDivisor = divisor;
 		
+		boolean isLast = true;
+		if(dividend.canBeSimplified()){
+			tmpDividend = this.dividend.nextStepToSimplyfy();
+			isLast = false;
+		}
+		if(divisor.canBeSimplified()){
+			tmpDivisor = this.divisor.nextStepToSimplyfy();
+			isLast = false;
+		}
+		if(!isLast){
+			return new Division(tmpDividend, tmpDivisor);
+		}
+		
 		if(tmpDivisor.matches(new Number(1))){
 			return tmpDividend;
 		}
 		
-		if(SettingsManager.getSetting("simplyfyToDivision").equals("1")){
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
 			if(tmpDividend instanceof Division && tmpDivisor instanceof Number){
 				Division dividendConverted = (Division)tmpDividend;
 				Number divisorConverted = (Number)tmpDivisor;
@@ -181,15 +194,8 @@ public class Division implements ExpressionPart{
 				return new Number(dividendConverted.getValue() / divisorConverted.getValue());
 			}
 		}
+		return this;
 		
-		if(dividend.canBeSimplified()){
-			tmpDividend = this.dividend.nextStepToSimplyfy();
-		}
-		if(divisor.canBeSimplified()){
-			tmpDivisor = this.divisor.nextStepToSimplyfy();
-		}
-		
-		return new Division(tmpDividend, tmpDivisor);
 	}
 	
 	@Override

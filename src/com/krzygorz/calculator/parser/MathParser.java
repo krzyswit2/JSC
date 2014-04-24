@@ -55,7 +55,7 @@ public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/con
 		if(a.equals(" ")){
 			return false;
 		}
-		if(this.getCharType(a.charAt(a.length() - 1)) != getCharType(b)){//one token can have only characters at the same type
+		if(this.getCharType(a.charAt(a.length() - 1)) != getCharType(b) || getCharType(a.charAt(a.length() - 1)) == 2 || getCharType(b) == 2){//one token can have only characters at the same type
 			return false;
 		}
 		return true;

@@ -24,7 +24,7 @@ import com.krzygorz.calculator.parser.MathParser;
 
 public class Addition implements ExpressionPart{
 	
-	Vector<ExpressionPart> addends; //skladniki
+	private Vector<ExpressionPart> addends; //skladniki
 	
 	public Addition() {
 		addends = new Vector<ExpressionPart>();
@@ -85,11 +85,14 @@ public class Addition implements ExpressionPart{
 		if(addend2 == null){
 			return addend1;
 		}
+		boolean isChanged = false;
 		if(addend1.canBeSimplified()){
 			addend1 = addend1.simplyfy();
+			isChanged = true;
 		}
 		if(addend2.canBeSimplified()){
 			addend2 = addend2.simplyfy();
+			isChanged = true;
 		}
 		if(addend1 instanceof Number && addend2 instanceof Number){
 			Number addend1Converted = (Number)addend1;
@@ -124,20 +127,26 @@ public class Addition implements ExpressionPart{
 				return new Multiplication(new Number(2), addend1);
 			}
 		}
+		if(isChanged){
+			return new Addition(addend1, addend2);
+		}
 		return null;
 	}
-	private ExpressionPart addTwoArgsSimple(ExpressionPart addend1, ExpressionPart addend2){
+	private ExpressionPart addTwoArgsSimple(ExpressionPart addend1, ExpressionPart addend2){//FIXME usunac klase Substraction i zastapic ja dodawaniem liczb ujemnych
 		if(addend1 == null){
 			return addend2;
 		}
 		if(addend2 == null){
 			return addend1;
 		}
+		boolean isChanged = false;
 		if(addend1.canBeSimplified()){
 			addend1 = addend1.simplyfy();
+			isChanged = true;
 		}
 		if(addend2.canBeSimplified()){
 			addend2 = addend2.simplyfy();
+			isChanged = true;
 		}
 		if(addend1 instanceof Number && addend2 instanceof Number){
 			Number addend1Converted = (Number)addend1;
@@ -171,6 +180,9 @@ public class Addition implements ExpressionPart{
 			if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
 				return new Multiplication(new Number(2), addend1);
 			}
+		}
+		if(isChanged){
+			return new Addition(addend1, addend2);
 		}
 		return null;
 	}
@@ -275,6 +287,10 @@ public class Addition implements ExpressionPart{
 			return true;
 		}
 		return false;
+	}
+	
+	public Vector<ExpressionPart> getAddends(){
+		return new Vector<ExpressionPart>(addends);
 	}
 
 }

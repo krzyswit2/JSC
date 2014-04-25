@@ -22,7 +22,7 @@ import java.util.Vector;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class GreatestCommonDivisor implements ExpressionPart {
-	Vector<ExpressionPart> args;
+	private Vector<ExpressionPart> args;
 	
 	
 	public GreatestCommonDivisor() {

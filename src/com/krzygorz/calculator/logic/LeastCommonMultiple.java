@@ -20,7 +20,7 @@ package com.krzygorz.calculator.logic;
 import java.util.Vector;
 
 public class LeastCommonMultiple implements ExpressionPart {
-	Vector<ExpressionPart> args;
+	private Vector<ExpressionPart> args;
 	
 	
 	public LeastCommonMultiple() {

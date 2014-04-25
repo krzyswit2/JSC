@@ -36,15 +36,15 @@ public class Exponentiation implements ExpressionPart {
 		if(base instanceof Number && exponent instanceof Number){
 			return new Number(Math.pow(((Number)base).getValue(), ((Number)exponent).getValue()));
 		}
-		return null;
+		return this;
 	}
 
 	@Override
 	public boolean canBeSimplified() {
-		if(!this.matches(simplyfy())){
-			return true;
+		if(this.matches(this.simplyfy())){
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

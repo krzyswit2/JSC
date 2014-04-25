@@ -22,8 +22,8 @@ import com.krzygorz.calculator.parser.MathParser;
 
 public class Division implements ExpressionPart{
 	
-	ExpressionPart dividend;//dzielnik
-	ExpressionPart divisor;//dzielna
+	private ExpressionPart dividend;//dzielnik
+	private ExpressionPart divisor;//dzielna
 	
 	public Division() {}
 	

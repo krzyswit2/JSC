@@ -22,8 +22,8 @@ import com.krzygorz.calculator.parser.MathParser;
 
 public class Substraction implements ExpressionPart{
 	
-	ExpressionPart minuend;//odjemnik
-	ExpressionPart subtrahend;//odjemna
+	private ExpressionPart minuend;//odjemnik
+	private ExpressionPart subtrahend;//odjemna
 	
 	public Substraction() {}
 	
@@ -90,6 +90,9 @@ public class Substraction implements ExpressionPart{
 
 	@Override
 	public boolean canBeSimplified() {
+		if(this.simplyfy().matches(this)){
+			return false;
+		}
 		return true;
 	}
 

@@ -19,11 +19,12 @@ package com.krzygorz.calculator.logic;
 
 import java.util.Vector;
 
+import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class Addition implements ExpressionPart{
 	
-	Vector<ExpressionPart> addends; //skladniki
+	private Vector<ExpressionPart> addends; //skladniki
 	
 	public Addition() {
 		addends = new Vector<ExpressionPart>();
@@ -49,7 +50,7 @@ public class Addition implements ExpressionPart{
 	public ExpressionPart simplyfy() {
 		if(addends != null){
 			if(addends.size() > 1){
-				Vector<ExpressionPart> toAdd = addends;
+				Vector<ExpressionPart> toAdd = new Vector<ExpressionPart>(addends);
 				Vector<ExpressionPart> result = new Vector<ExpressionPart>();
 				while(toAdd.size() != 0){
 					ExpressionPart tmp = null;
@@ -84,11 +85,14 @@ public class Addition implements ExpressionPart{
 		if(addend2 == null){
 			return addend1;
 		}
+		boolean isChanged = false;
 		if(addend1.canBeSimplified()){
 			addend1 = addend1.simplyfy();
+			isChanged = true;
 		}
 		if(addend2.canBeSimplified()){
 			addend2 = addend2.simplyfy();
+			isChanged = true;
 		}
 		if(addend1 instanceof Number && addend2 instanceof Number){
 			Number addend1Converted = (Number)addend1;
@@ -96,30 +100,89 @@ public class Addition implements ExpressionPart{
 			
 			return new Number(addend1Converted.getValue() + addend2Converted.getValue());
 		}
-		if(addend1 instanceof Fraction && addend2 instanceof Number){
-			Fraction addend1Converted = new Fraction(((Fraction)addend1).getNumerator(), ((Fraction)addend1).getDenominator());
-			Number addend2Converted = new Number(((Number)addend2).getValue());
-			
-			addend1Converted.setNumerator(new Addition(addend1Converted.getNumerator(), new Multiplication(addend2Converted, addend1Converted.getDenominator())));
-			
-			return addend1Converted.simplyfy();
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(addend1 instanceof Division && addend2 instanceof Number){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Number addend2Converted = new Number(((Number)addend2).getValue());
+
+				addend1Converted.setDividend(new Addition(addend1Converted.getDividend(), new Multiplication(addend2Converted, addend1Converted.getDivisor())));
+
+				return addend1Converted.simplyfy();
+			}
+			if(addend1 instanceof Number && addend2 instanceof Division){
+				return new Addition(addend2, addend1).simplyfy();
+			}
+			if(addend1 instanceof Division && addend2 instanceof Division){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Division addend2Converted = new Division(((Division)addend2).getDividend(), ((Division)addend2).getDivisor());
+				ExpressionPart lcp = new LeastCommonMultiple(addend1Converted.getDivisor(), addend2Converted.getDivisor()).simplyfy();
+
+				addend1Converted.setDividend(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDividend()));
+				addend1Converted.setDivisor(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDivisor()));
+				addend2Converted.setDividend(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDividend()));
+				//addend2Converted.setDivisor(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDivisor()));
+				return new Division(new Addition(addend1Converted.getDividend(), addend2Converted.getDividend()), addend1Converted.getDivisor()).simplyfy();
+			}
+			if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
+				return new Multiplication(new Number(2), addend1);
+			}
 		}
-		if(addend1 instanceof Number && addend2 instanceof Fraction){
-			return new Addition(addend2, addend1).simplyfy();
+		if(isChanged){
+			return new Addition(addend1, addend2);
 		}
-		if(addend1 instanceof Fraction && addend2 instanceof Fraction){
-			Fraction addend1Converted = new Fraction(((Fraction)addend1).getNumerator(), ((Fraction)addend1).getDenominator());
-			Fraction addend2Converted = new Fraction(((Fraction)addend2).getNumerator(), ((Fraction)addend2).getDenominator());
-			ExpressionPart lcp = new LeastCommonMultiple(addend1Converted.getDenominator(), addend2Converted.getDenominator());
+		return null;
+	}
+	private ExpressionPart addTwoArgsSimple(ExpressionPart addend1, ExpressionPart addend2){//FIXME usunac klase Substraction i zastapic ja dodawaniem liczb ujemnych
+		if(addend1 == null){
+			return addend2;
+		}
+		if(addend2 == null){
+			return addend1;
+		}
+		boolean isChanged = false;
+		if(addend1.canBeSimplified()){
+			addend1 = addend1.simplyfy();
+			isChanged = true;
+		}
+		if(addend2.canBeSimplified()){
+			addend2 = addend2.simplyfy();
+			isChanged = true;
+		}
+		if(addend1 instanceof Number && addend2 instanceof Number){
+			Number addend1Converted = (Number)addend1;
+			Number addend2Converted = (Number)addend2;
 			
-			addend1Converted.setNumerator(new Multiplication(new Division(lcp, addend1Converted.getDenominator()), addend1Converted.getNumerator()));
-			addend1Converted.setDenominator(new Multiplication(new Division(lcp, addend1Converted.getDenominator()), addend1Converted.getDenominator()));
-			addend2Converted.setNumerator(new Multiplication(new Division(lcp, addend2Converted.getDenominator()), addend2Converted.getNumerator()));
-			//addend2Converted.setDenominator(new Multiplication(new Division(lcp, addend2Converted.getDenominator()), addend2Converted.getDenominator()));
-			return new Fraction(new Addition(addend1Converted.getNumerator(), addend2Converted.getNumerator()), addend1Converted.getDenominator()).simplyfy();
+			return new Number(addend1Converted.getValue() + addend2Converted.getValue());
 		}
-		if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
-			return new Multiplication(new Number(2), addend1);
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(addend1 instanceof Division && addend2 instanceof Number){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Number addend2Converted = new Number(((Number)addend2).getValue());
+
+				addend1Converted.setDividend(new Addition(addend1Converted.getDividend(), new Multiplication(addend2Converted, addend1Converted.getDivisor())));
+
+				return addend1Converted;
+			}
+			if(addend1 instanceof Number && addend2 instanceof Division){
+				return new Addition(addend2, addend1);
+			}
+			if(addend1 instanceof Division && addend2 instanceof Division){
+				Division addend1Converted = new Division(((Division)addend1).getDividend(), ((Division)addend1).getDivisor());
+				Division addend2Converted = new Division(((Division)addend2).getDividend(), ((Division)addend2).getDivisor());
+				ExpressionPart lcp = new LeastCommonMultiple(addend1Converted.getDivisor(), addend2Converted.getDivisor());
+
+				addend1Converted.setDividend(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDividend()));
+				addend1Converted.setDivisor(new Multiplication(new Division(lcp, addend1Converted.getDivisor()), addend1Converted.getDivisor()));
+				addend2Converted.setDividend(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDividend()));
+				//addend2Converted.setDivisor(new Multiplication(new Division(lcp, addend2Converted.getDivisor()), addend2Converted.getDivisor()));
+				return new Division(new Addition(addend1Converted.getDividend(), addend2Converted.getDividend()), addend1Converted.getDivisor()).simplyfy();
+			}
+			if(addend1 instanceof Variable && addend2 instanceof Variable && addend1.matches(addend2)){
+				return new Multiplication(new Number(2), addend1);
+			}
+		}
+		if(isChanged){
+			return new Addition(addend1, addend2);
 		}
 		return null;
 	}
@@ -151,13 +214,13 @@ public class Addition implements ExpressionPart{
 		if(isLast){
 			if(addends != null){
 				if(addends.size() > 1){
-					Vector<ExpressionPart> toAdd = addends;
+					Vector<ExpressionPart> toAdd = new Vector<ExpressionPart>(addends);
 					Vector<ExpressionPart> result = new Vector<ExpressionPart>();
 					while(toAdd.size() != 0){
 						ExpressionPart tmp = null;
 						Vector<ExpressionPart> toAddNext = new Vector<ExpressionPart>();
 						for(ExpressionPart i : toAdd){
-							ExpressionPart tmp1 = addTwoArgs(tmp, i);
+							ExpressionPart tmp1 = addTwoArgsSimple(tmp, i);
 							if(tmp1 != null){
 								tmp = tmp1;
 							}else{
@@ -206,7 +269,7 @@ public class Addition implements ExpressionPart{
 	@Override
 	public boolean matches(ExpressionPart arg) {
 		if(arg instanceof Addition){
-			Vector<ExpressionPart> left = addends;
+			Vector<ExpressionPart> left = new Vector<ExpressionPart>(addends);
 			Addition argConverted = (Addition)arg;
 			for(ExpressionPart i : argConverted.addends){
 				boolean hasMatchingArg = false;
@@ -221,8 +284,13 @@ public class Addition implements ExpressionPart{
 					return false;
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
+	}
+	
+	public Vector<ExpressionPart> getAddends(){
+		return new Vector<ExpressionPart>(addends);
 	}
 
 }

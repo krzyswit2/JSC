@@ -19,11 +19,12 @@ package com.krzygorz.calculator.logic;
 
 import java.util.Vector;
 
+import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
 
 public class Multiplication implements ExpressionPart{
 	
-	Vector<ExpressionPart> factors; //czynniki
+	private Vector<ExpressionPart> factors; //czynniki
 	
 	public Multiplication() {
 		factors = new Vector<ExpressionPart>();
@@ -84,11 +85,14 @@ public class Multiplication implements ExpressionPart{
 		if(factor2 == null){
 			return factor1;
 		}
+		boolean isChanged = false;
 		if(factor1.canBeSimplified()){
 			factor1 = factor1.simplyfy();
+			isChanged = true;
 		}
 		if(factor2.canBeSimplified()){
 			factor2 = factor2.simplyfy();
+			isChanged = true;
 		}
 		if(factor1 instanceof Number && factor2 instanceof Number){//TODO nie dawac wynikow 1*cos
 			Number addend1Converted = (Number)factor1;
@@ -96,23 +100,161 @@ public class Multiplication implements ExpressionPart{
 
 			return new Number(addend1Converted.getValue() * addend2Converted.getValue());
 		}
-
-		if(factor1 instanceof Number && factor2 instanceof Fraction){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
-			Number factor1Converted = (Number)factor1;
-			Fraction factor2Converted = (Fraction)factor2;
-
-			ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDenominator()).simplyfy();
-			return new Fraction(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getNumerator()), new Division(factor2Converted.getDenominator(), gcd)).simplyfy();
+		if(factor1 instanceof Multiplication){
+			Multiplication factor1Converted = new Multiplication(new Vector<ExpressionPart>(((Multiplication)factor1).factors));
+			factor1Converted.addFactor(factor2);
+			return factor1Converted.simplyfy();
 		}
-		if(factor1 instanceof Fraction && factor2 instanceof Number){
-			return new Multiplication(factor2, factor1).simplyfy();
+		if(factor2 instanceof Multiplication){
+			Multiplication factor2Converted = new Multiplication(new Vector<ExpressionPart>(((Multiplication)factor2).factors));
+			factor2Converted.addFactor(factor1);
+			return factor2Converted.simplyfy();
 		}
-		if(factor1 instanceof Fraction && factor2 instanceof Fraction){
-			Fraction factor1Converted = (Fraction)factor1;
-			Fraction factor2Converted = (Fraction)factor2;
-			ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getNumerator(), factor2Converted.getDenominator()).simplyfy();
-			ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getNumerator(), factor1Converted.getDenominator()).simplyfy();
-			return new Fraction(new Multiplication(new Division(factor1Converted.getNumerator(), gcd1), new Division(factor2Converted.getNumerator(), gcd2)), new Multiplication(new Division(factor1Converted.getDenominator(), gcd2),new Division(factor2Converted.getDenominator(), gcd1))).simplyfy();
+		
+		if(factor1 instanceof Addition){
+			Addition factor1Converted = (Addition)factor1;
+			Addition ret = new Addition();
+			for(ExpressionPart i : factor1Converted.getAddends()){
+				ret.addAddend(new Multiplication(i, factor2));
+			}
+			return ret.simplyfy();
+		}
+		if(factor2 instanceof Addition){
+			Addition factor2Converted = (Addition)factor2;
+			Addition ret = new Addition();
+			for(ExpressionPart i : factor2Converted.getAddends()){
+				ret.addAddend(new Multiplication(i, factor1));
+			}
+			return ret.simplyfy();
+		}
+		if(factor1 instanceof Substraction){
+			Substraction factor1Converted = (Substraction)factor1;
+			return new Substraction(new Multiplication(factor1Converted.getMinuend(), factor2), new Multiplication(factor1Converted.getSubtrahend(), factor2)).simplyfy();
+		}
+		if(factor2 instanceof Substraction){
+			Substraction factor2Converted = (Substraction)factor2;
+			return new Substraction(new Multiplication(factor2Converted.getMinuend(), factor1), new Multiplication(factor2Converted.getSubtrahend(), factor1)).simplyfy();
+		}
+		
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(factor1 instanceof Number && factor2 instanceof Division){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
+				Number factor1Converted = (Number)factor1;
+				Division factor2Converted = (Division)factor2;
+
+				ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getDividend()), new Division(factor2Converted.getDivisor(), gcd)).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Number){
+				return new Multiplication(factor2, factor1).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Division){
+				Division factor1Converted = (Division)factor1;
+				Division factor2Converted = (Division)factor2;
+				ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getDividend(), factor2Converted.getDivisor()).simplyfy();
+				ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getDividend(), factor1Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted.getDividend(), gcd1), new Division(factor2Converted.getDividend(), gcd2)), new Multiplication(new Division(factor1Converted.getDivisor(), gcd2),new Division(factor2Converted.getDivisor(), gcd1))).simplyfy();
+			}
+		}
+		
+		if(factor1.matches(factor2)){
+			return new Exponentiation(factor1, new Number(2));
+		}
+		if(factor1 instanceof Exponentiation && ((Exponentiation)factor1).getBase().matches(factor2)){
+			return new Exponentiation(factor1, new Addition(((Exponentiation)factor1).getBase(), new Number(1)).simplyfy());
+		}
+		if(isChanged){
+			return new Multiplication(factor1, factor2);
+		}
+		return null;
+	}
+	private ExpressionPart multiplyTwoArgsSimple(ExpressionPart factor1, ExpressionPart factor2){
+		if(factor1 == null){
+			return factor2;
+		}
+		if(factor2 == null){
+			return factor1;
+		}
+		boolean isChanged = false;
+		if(factor1.canBeSimplified()){
+			factor1 = factor1.simplyfy();
+			isChanged = true;
+		}
+		if(factor2.canBeSimplified()){
+			factor2 = factor2.simplyfy();
+			isChanged = true;
+		}
+		if(factor1 instanceof Number && factor2 instanceof Number){//TODO nie dawac wynikow 1*cos
+			Number addend1Converted = (Number)factor1;
+			Number addend2Converted = (Number)factor2;
+
+			return new Number(addend1Converted.getValue() * addend2Converted.getValue());
+		}
+		
+		if(factor1 instanceof Multiplication){
+			Multiplication factor1Converted = (Multiplication)factor1;
+			factor1Converted.addFactor(factor2);
+			return factor1Converted.nextStepToSimplyfy();
+		}
+		if(factor2 instanceof Multiplication){
+			Multiplication factor2Converted = (Multiplication)factor2;
+			factor2Converted.addFactor(factor1);
+			return factor2Converted.nextStepToSimplyfy();
+		}
+		
+		if(factor1 instanceof Addition){
+			Addition factor1Converted = (Addition)factor1;
+			Addition ret = new Addition();
+			for(ExpressionPart i : factor1Converted.getAddends()){
+				ret.addAddend(new Multiplication(i, factor2));
+			}
+			return ret;
+		}
+		if(factor2 instanceof Addition){
+			Addition factor2Converted = (Addition)factor2;
+			Addition ret = new Addition();
+			for(ExpressionPart i : factor2Converted.getAddends()){
+				ret.addAddend(new Multiplication(i, factor1));
+			}
+			return ret;
+		}
+		if(factor1 instanceof Substraction){
+			Substraction factor1Converted = (Substraction)factor1;
+			return new Substraction(new Multiplication(factor1Converted.getMinuend(), factor2), new Multiplication(factor1Converted.getSubtrahend(), factor2));
+		}
+		if(factor2 instanceof Substraction){
+			Substraction factor2Converted = (Substraction)factor2;
+			return new Substraction(new Multiplication(factor2Converted.getMinuend(), factor1), new Multiplication(factor2Converted.getSubtrahend(), factor1));
+		}
+		
+		if(SettingsManager.getSetting("simplyfyToFraction").equals("1")){
+			if(factor1 instanceof Number && factor2 instanceof Division){//TODO jak sie da, to zrobic, zeby kolejnosc argumentow nie miala znaczenia
+				Number factor1Converted = (Number)factor1;
+				Division factor2Converted = (Division)factor2;
+
+				ExpressionPart gcd = new GreatestCommonDivisor(factor1Converted, factor2Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted, gcd), factor2Converted.getDividend()), new Division(factor2Converted.getDivisor(), gcd)).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Number){
+				return new Multiplication(factor2, factor1).simplyfy();
+			}
+			if(factor1 instanceof Division && factor2 instanceof Division){
+				Division factor1Converted = (Division)factor1;
+				Division factor2Converted = (Division)factor2;
+				ExpressionPart gcd1 = new GreatestCommonDivisor(factor1Converted.getDividend(), factor2Converted.getDivisor()).simplyfy();
+				ExpressionPart gcd2 = new GreatestCommonDivisor(factor2Converted.getDividend(), factor1Converted.getDivisor()).simplyfy();
+				return new Division(new Multiplication(new Division(factor1Converted.getDividend(), gcd1), new Division(factor2Converted.getDividend(), gcd2)), new Multiplication(new Division(factor1Converted.getDivisor(), gcd2),new Division(factor2Converted.getDivisor(), gcd1))).simplyfy();
+			}
+		}
+		
+		if(factor1.matches(factor2)){
+			return new Exponentiation(factor1, new Number(2));
+		}
+		if(factor1 instanceof Exponentiation && ((Exponentiation)factor1).getBase().matches(factor2)){
+			return new Exponentiation(factor1, new Addition(((Exponentiation)factor1).getBase(), new Number(1)).simplyfy());
+		}
+		
+		if(isChanged){
+			return new Multiplication(factor1, factor2);
 		}
 		return null;
 	}
@@ -151,7 +293,7 @@ public class Multiplication implements ExpressionPart{
 						ExpressionPart tmp = null;
 						Vector<ExpressionPart> toMultiplyNext = new Vector<ExpressionPart>();
 						for(ExpressionPart i : toMultiply){
-							ExpressionPart tmp1 = multiplyTwoArgs(tmp, i);
+							ExpressionPart tmp1 = multiplyTwoArgsSimple(tmp, i);
 							if(tmp1 != null){
 								tmp = tmp1;
 							}else{
@@ -173,7 +315,7 @@ public class Multiplication implements ExpressionPart{
 		}else{
 			Multiplication retValue = new Multiplication();
 			for(ExpressionPart tmp : factors){
-				if(!(tmp instanceof Number) && tmp.canBeSimplified()){
+				if(tmp.canBeSimplified()){
 					//System.out.println("next NaN arg: " + tmp);
 					tmp = tmp.nextStepToSimplyfy();
 				}
@@ -187,6 +329,14 @@ public class Multiplication implements ExpressionPart{
 	@Override
 	public String toString(){
 		String returnVal = "";
+		if(factors.size() == 2){
+			if(factors.get(0) instanceof Number && factors.get(1) instanceof Variable){
+				return factors.get(0).toString().concat(factors.get(1).toString());
+			}
+			if(factors.get(1) instanceof Number && factors.get(0) instanceof Variable){
+				return factors.get(1).toString().concat(factors.get(0).toString());
+			}
+		}
 		for(ExpressionPart arg : factors){
 			returnVal = returnVal.concat("(");
 			returnVal = returnVal.concat(arg.toString());
@@ -200,7 +350,7 @@ public class Multiplication implements ExpressionPart{
 	@Override
 	public boolean matches(ExpressionPart arg) {
 		if(arg instanceof Multiplication){
-			Vector<ExpressionPart> left = factors;
+			Vector<ExpressionPart> left = new Vector<ExpressionPart>(factors);
 			Multiplication argConverted = (Multiplication)arg;
 			for(ExpressionPart i : argConverted.factors){
 				boolean hasMatchingArg = false;
@@ -215,8 +365,9 @@ public class Multiplication implements ExpressionPart{
 					return false;
 				}
 			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 }

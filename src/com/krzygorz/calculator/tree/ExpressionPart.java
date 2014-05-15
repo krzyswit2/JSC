@@ -15,13 +15,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
-public interface ExpressionPart {//number, fraction, operations etc implement this
+public interface ExpressionPart {
 	public ExpressionPart simplyfy();
 	public boolean canBeSimplified();
 	//TODO Object tryToTransform(ExpressionPart dest)
-	public ExpressionPart nextStepToSimplyfy();//first try to simplify args, if args can't be simplified, do operation
+	//public ExpressionPart nextStepToSimplyfy();
 	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);//like equals, but different
+	public boolean matches(ExpressionPart arg);
 }

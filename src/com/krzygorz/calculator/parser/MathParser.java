@@ -20,16 +20,15 @@ package com.krzygorz.calculator.parser;
 
 import java.util.Vector;
 
-import com.krzygorz.calculator.logic.Addition;
-import com.krzygorz.calculator.logic.Division;
-import com.krzygorz.calculator.logic.Equation;
-import com.krzygorz.calculator.logic.Exponentiation;
-import com.krzygorz.calculator.logic.ExpressionPart;
-//import com.krzygorz.calculator.logic.Fraction;
-import com.krzygorz.calculator.logic.Multiplication;
-import com.krzygorz.calculator.logic.Number;
-import com.krzygorz.calculator.logic.Substraction;
-import com.krzygorz.calculator.logic.Variable;
+import com.krzygorz.calculator.tree.Addition;
+import com.krzygorz.calculator.tree.Division;
+import com.krzygorz.calculator.tree.Equation;
+import com.krzygorz.calculator.tree.Exponentiation;
+import com.krzygorz.calculator.tree.ExpressionPart;
+import com.krzygorz.calculator.tree.Multiplication;
+import com.krzygorz.calculator.tree.Number;
+import com.krzygorz.calculator.tree.Substraction;
+import com.krzygorz.calculator.tree.Variable;
 
 public class MathParser {//TODO wieksze mozliwosci konfiguracji z argumentow/config file(debugMode czy simplyfyFractions)
 	public MathParser() {

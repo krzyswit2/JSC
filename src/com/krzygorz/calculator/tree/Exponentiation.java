@@ -16,7 +16,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
 public class Exponentiation implements ExpressionPart {
 	private ExpressionPart base;
@@ -32,14 +32,6 @@ public class Exponentiation implements ExpressionPart {
 	}
 
 	@Override
-	public ExpressionPart simplyfy() {
-		if(base instanceof Number && exponent instanceof Number){
-			return new Number(Math.pow(((Number)base).getValue(), ((Number)exponent).getValue()));
-		}
-		return this;
-	}
-
-	@Override
 	public boolean canBeSimplified() {
 		if(this.matches(this.simplyfy())){
 			return false;
@@ -48,14 +40,14 @@ public class Exponentiation implements ExpressionPart {
 	}
 
 	@Override
-	public ExpressionPart nextStepToSimplyfy() {
+	public ExpressionPart simplyfy() {
 		if(base instanceof Number && exponent instanceof Number){
 			return new Number(Math.pow(((Number)base).getValue(), ((Number)exponent).getValue()));
 		}
 		ExpressionPart tmpbase = base;
 		ExpressionPart tmpexponent = exponent;
 		if(base.canBeSimplified()){
-			tmpbase = base.nextStepToSimplyfy();
+			tmpbase = base.simplyfy();
 		}
 		if(exponent.canBeSimplified()){
 			tmpexponent = exponent.simplyfy();

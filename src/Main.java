@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import com.krzygorz.calculator.gui.CalculatorWindow;
-import com.krzygorz.calculator.logic.ExpressionPart;
 import com.krzygorz.calculator.misc.Logger;
 import com.krzygorz.calculator.misc.SettingsManager;
 import com.krzygorz.calculator.parser.MathParser;
+import com.krzygorz.calculator.tree.ExpressionPart;
 
 
 public class Main {
@@ -42,16 +42,15 @@ public class Main {
 		try {
 			ExpressionPart parsedInput = parser.parseString(input); 
 			System.out.println("result tree: " + parsedInput.toString());
-			System.out.println("value: " + parsedInput.simplyfy());
 			
-			System.out.println("now trying to do this step by step");
+			System.out.println("calculating:");
 			String toOutput = "";
 			int i = 0;
 			
 			while(parsedInput.canBeSimplified() && i < 100){
 				toOutput = toOutput.concat(parsedInput.toString());
 				toOutput = toOutput.concat(" = "); 
-				parsedInput = parsedInput.nextStepToSimplyfy();
+				parsedInput = parsedInput.simplyfy();
 				i++;
 			}
 			toOutput = toOutput.concat(parsedInput.toString());

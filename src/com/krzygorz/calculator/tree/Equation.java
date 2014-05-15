@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
 //TODO gdy nie wiadomo jak cos zrobic, zajzec do zestawu rownan, i sprobowac je przeksztalcic
 public class Equation implements ExpressionPart{//my current objective
@@ -30,11 +30,6 @@ public class Equation implements ExpressionPart{//my current objective
 		this.side1 = side1;
 		this.side1 = side2;
 	}
-	
-	@Override
-	public ExpressionPart simplyfy() {
-		return this;
-	}
 
 	@Override
 	public boolean canBeSimplified() {
@@ -42,7 +37,7 @@ public class Equation implements ExpressionPart{//my current objective
 	}
 
 	@Override
-	public ExpressionPart nextStepToSimplyfy() {
+	public ExpressionPart simplyfy() {
 		return this;
 	}
 	

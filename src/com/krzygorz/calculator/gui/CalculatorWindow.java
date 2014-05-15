@@ -29,9 +29,9 @@ import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.krzygorz.calculator.logic.ExpressionPart;
 import com.krzygorz.calculator.misc.LoggingInterface;
 import com.krzygorz.calculator.parser.MathParser;
+import com.krzygorz.calculator.tree.ExpressionPart;
 
 public class CalculatorWindow extends JFrame implements ActionListener, LoggingInterface{//I'm not using it, becouse I don't need gui now
 	private JTextField input = new JTextField("enter expression here");
@@ -68,18 +68,14 @@ public class CalculatorWindow extends JFrame implements ActionListener, LoggingI
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("simplyfy")){
 			MathParser parser = new MathParser();
-			System.out.println("enter expression to simplyfy");
 			try {
 				ExpressionPart parsedInput = parser.parseString(input.getText());
 				System.out.println("result tree: " + parsedInput.toString());
-				System.out.println("value: " + parsedInput.simplyfy());
-				
-				System.out.println("now trying to do this step by step");
 				String toOutput = "";
 				while(parsedInput.canBeSimplified()){
 					toOutput = toOutput.concat(parsedInput.toString());
 					toOutput = toOutput.concat(" = ");
-					parsedInput = parsedInput.nextStepToSimplyfy();
+					parsedInput = parsedInput.simplyfy();
 				}
 				toOutput = toOutput.concat(parsedInput.toString());
 				outputArea.setText(toOutput);

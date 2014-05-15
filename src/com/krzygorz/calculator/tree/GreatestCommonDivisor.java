@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
 import java.util.Vector;
 
@@ -62,34 +62,13 @@ public class GreatestCommonDivisor implements ExpressionPart {
 	}
 
 	@Override
-	public ExpressionPart simplyfy() {
-		if(args.size() > 1){
-			if(args.size() > 2){//gcd(arg1, arg2, arg3) = gcd(arg1, gcd(arg2, arg3))
-				return new GreatestCommonDivisor(new ExpressionPart[]{args.get(0), new GreatestCommonDivisor((ExpressionPart[])(args.subList(1, args.size() - 1).toArray()))});
-			}else{
-				ExpressionPart arg1 = args.get(0);
-				ExpressionPart arg2 = args.get(1);
-				if(arg1 instanceof Number && arg2 instanceof Number){
-					Number arg1Converted = (Number)arg1;
-					Number arg2Converted = (Number)arg2;
-					if(Operation.isInteger(arg1Converted.getValue()) && Operation.isInteger(arg2Converted.getValue())){
-						return new Number(euclidsAlg(Math.round(arg1Converted.getValue()), Math.round(arg2Converted.getValue())));
-					}
-				}
-			}
-		}
-				
-		return null;
-	}
-
-	@Override
 	public boolean canBeSimplified() {
 		
 		return true;
 	}
 
 	@Override
-	public ExpressionPart nextStepToSimplyfy() {
+	public ExpressionPart simplyfy() {
 		
 		if(args.size() > 1){
 			if(args.size() > 2){

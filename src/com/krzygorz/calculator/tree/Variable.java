@@ -15,70 +15,42 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
-public class Number implements ExpressionPart{
-	private double value;
-
-	public Number(double value){
-		this.value = value;
+public class Variable implements ExpressionPart{
+	private String name;
+	public Variable() {
+		name = "";
+	}
+	public Variable(String name){
+		this.name = name;
 	}
 	
-	public Number(){
-		this.value = 0;
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	
+	@Override
+	public boolean canBeSimplified() {
+		return false;
+	}
 	@Override
 	public ExpressionPart simplyfy() {
 		return this;
 	}
 	
-	public void setValue(double value) {
-		this.value = value;
-	}
-	
-	public double getValue(){
-		return value;
-	}
 	@Override
 	public String toString(){
-		String retValue = "";
-		if(this.value < 0){
-			retValue = retValue.concat("(");
-		}
-		if((value % 1) == 0){
-			retValue = retValue.concat(String.valueOf((int)value));
-		}else{
-			retValue = retValue.concat(String.valueOf(value));
-		}
-		
-		if(this.value < 0){
-			retValue = retValue.concat(")");
-		}
-		return retValue;
+		return this.name;
 	}
-	
-	/*@Override
-	public int getType() {
-		return 2;
-	}*/
-
-	@Override
-	public boolean canBeSimplified() {
-		return false;
-	}
-
-	@Override
-	public ExpressionPart nextStepToSimplyfy() {
-		return this;
-	}
-
 	@Override
 	public boolean matches(ExpressionPart arg) {
-		if(arg instanceof Number && (((Number)arg).getValue() == this.getValue())){
+		if(arg instanceof Variable && (((Variable)arg).getName().equals(this.getName()))){
 			return true;
 		}
 		return false;
 	}
-
 }

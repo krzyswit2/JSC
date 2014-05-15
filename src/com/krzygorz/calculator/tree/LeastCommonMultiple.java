@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.logic;
+package com.krzygorz.calculator.tree;
 
 import java.util.Vector;
 
@@ -43,18 +43,13 @@ public class LeastCommonMultiple implements ExpressionPart {
 	}
 
 	@Override
-	public ExpressionPart simplyfy() {
-		return new Division(new Multiplication(args), new GreatestCommonDivisor(args)).simplyfy();
-	}
-
-	@Override
 	public boolean canBeSimplified() {
 		
 		return true;
 	}
 
 	@Override
-	public ExpressionPart nextStepToSimplyfy() {
+	public ExpressionPart simplyfy() {
 		return new Division(new Multiplication(args), new GreatestCommonDivisor(args)).simplyfy();
 	}
 	

@@ -247,5 +247,9 @@ public class Multiplication implements ExpressionPart{
 		}
 		return false;
 	}
+	
+	public Vector<ExpressionPart> getFactors(){
+		return new Vector<ExpressionPart>(factors);
+	}
 
 }

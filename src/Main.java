@@ -22,6 +22,8 @@ import java.util.Scanner;
 import com.krzygorz.calculator.gui.CalculatorWindow;
 import com.krzygorz.calculator.misc.Logger;
 import com.krzygorz.calculator.misc.SettingsManager;
+import com.krzygorz.calculator.modules.Arithmetic;
+import com.krzygorz.calculator.modules.Module;
 import com.krzygorz.calculator.parser.MathParser;
 import com.krzygorz.calculator.tree.ExpressionPart;
 
@@ -47,10 +49,12 @@ public class Main {
 			String toOutput = "";
 			int i = 0;
 			
+			Module loadedModule = new Arithmetic();
+			
 			while(parsedInput.canBeSimplified() && i < 100){
 				toOutput = toOutput.concat(parsedInput.toString());
 				toOutput = toOutput.concat(" = "); 
-				parsedInput = parsedInput.simplyfy();
+				parsedInput = loadedModule.simplyfy(parsedInput);//parsedInput.simplyfy();
 				i++;
 			}
 			toOutput = toOutput.concat(parsedInput.toString());

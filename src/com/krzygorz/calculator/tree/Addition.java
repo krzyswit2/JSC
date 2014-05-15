@@ -205,5 +205,9 @@ public class Addition implements ExpressionPart{
 	public Vector<ExpressionPart> getAddends(){
 		return new Vector<ExpressionPart>(addends);
 	}
+	
+	public ExpressionPart getAddend(int index){
+		return addends.get(index);
+	}
 
 }

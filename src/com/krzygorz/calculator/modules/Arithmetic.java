@@ -6,6 +6,7 @@ import com.krzygorz.calculator.tree.Addition;
 import com.krzygorz.calculator.tree.ExpressionPart;
 import com.krzygorz.calculator.tree.Multiplication;
 import com.krzygorz.calculator.tree.Number;
+import com.krzygorz.calculator.tree.Substraction;
 
 public class Arithmetic implements Module {
 	
@@ -75,7 +76,7 @@ public class Arithmetic implements Module {
 		boolean isLast = true;
 		Vector<ExpressionPart> factors = arg.getFactors();
 		for(ExpressionPart i : factors){
-			if(arg.canBeSimplified()){
+			if(i.canBeSimplified()){
 				isLast = false;
 				break;
 			}
@@ -98,7 +99,7 @@ public class Arithmetic implements Module {
 								newTmp = i; 
 							}
 							if(tmp instanceof Number && i instanceof Number){
-								newTmp = new Number(((Number)tmp).getValue() + ((Number)i).getValue());
+								newTmp = new Number(((Number)tmp).getValue() * ((Number)i).getValue());
 							}
 							if(newTmp != null){
 								tmp = newTmp;
@@ -131,12 +132,23 @@ public class Arithmetic implements Module {
 		}
 		return null;
 	}
+	private ExpressionPart simplyfySubstraction(Substraction arg){
+		if(arg.getMinuend() instanceof Number && arg.getSubtrahend() instanceof Number){
+			return new Number(((Number)arg.getMinuend()).getValue() - ((Number)arg.getSubtrahend()).getValue());
+		}
+		if(arg.getMinuend().canBeSimplified()){
+			arg.setMinuend(simplyfy(arg.getMinuend()));
+		}
+		return null;
+	}
 	@Override
 	public ExpressionPart simplyfy(ExpressionPart arg) {
 		if(arg instanceof Addition)
 			return simplyfyAddition((Addition)arg);
 		if(arg instanceof Multiplication)
 			return simplyfyMultiplication((Multiplication)arg);
+		if(arg instanceof Substraction)
+			return simplyfySubstraction((Substraction)arg);
 		return null;
 	}
 

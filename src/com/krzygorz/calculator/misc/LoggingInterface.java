@@ -17,6 +17,6 @@
  */
 package com.krzygorz.calculator.misc;
 
-public interface LoggingInterface {//maybe I'll use this for logging in gui
+public interface LoggingInterface {
 	void Log(String message);
 }

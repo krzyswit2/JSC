@@ -19,41 +19,22 @@ package com.krzygorz.calculator.tree;
 
 import java.util.Vector;
 
-import com.krzygorz.calculator.parser.MathParser;
-
-public class GreatestCommonDivisor implements ExpressionPart {
+public class LeastCommonMultiple implements ExpressionPart {
 	private Vector<ExpressionPart> args;
 	
 	
-	public GreatestCommonDivisor() {
+	public LeastCommonMultiple() {
 		this.args = new Vector<ExpressionPart>();
 	}
 	
-	public GreatestCommonDivisor(ExpressionPart... args){
+	public LeastCommonMultiple(ExpressionPart... args){
 		this.args = new Vector<ExpressionPart>();
 		for(ExpressionPart i : args){
 			this.args.add(i);
 		}
 	}
 	
-	public long euclidsAlg(long l, long m) { //TODO obliczenia w GUI
-		l = Math.abs(l);
-		m = Math.abs(m);
-		
-	    if (l == 0){
-	        return m;
-	    }
-	    
-	    while (m != 0) {
-	        if (l > m)
-	            l = l - m;
-	        else
-	            m = m - l;
-	    }
-	    return l;
-	}
-	
-	public GreatestCommonDivisor(Vector<ExpressionPart> args) {
+	public LeastCommonMultiple(Vector<ExpressionPart> args) {
 		this.args = args;
 	}
 	
@@ -61,7 +42,7 @@ public class GreatestCommonDivisor implements ExpressionPart {
 		this.args.add(arg);
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		
 		return true;
@@ -69,28 +50,11 @@ public class GreatestCommonDivisor implements ExpressionPart {
 
 	@Override
 	public ExpressionPart simplyfy() {
-		
-		if(args.size() > 1){
-			if(args.size() > 2){
-				return new GreatestCommonDivisor(new ExpressionPart[]{args.get(0), new GreatestCommonDivisor((ExpressionPart[])(args.subList(1, args.size() - 1).toArray()))});
-			}else{
-				ExpressionPart arg1 = args.get(0);
-				ExpressionPart arg2 = args.get(1);
-				if(arg1 instanceof Number && arg2 instanceof Number){
-					Number arg1Converted = (Number)arg1;
-					Number arg2Converted = (Number)arg2;
-					if(Operation.isInteger(arg1Converted.getValue()) && Operation.isInteger(arg2Converted.getValue())){
-						return new Number(euclidsAlg(Math.round(arg1Converted.getValue()), Math.round(arg2Converted.getValue())));
-					}
-				}
-			}
-		}
-				
-		return null;
-	}*/
+		return new Division(new Multiplication(args), new GreatestCommonDivisor(args)).simplyfy();
+	}
 	
 	@Override public String toString(){
-		String returnVal = "gcd(";
+		String returnVal = "lcm(";
 		for(ExpressionPart arg : args){
 			returnVal = returnVal.concat(arg.toString());
 			returnVal = returnVal.concat(", ");
@@ -102,9 +66,9 @@ public class GreatestCommonDivisor implements ExpressionPart {
 	
 	@Override
 	public boolean matches(ExpressionPart arg) {
-		if(arg instanceof GreatestCommonDivisor){
+		if(arg instanceof LeastCommonMultiple){
 			Vector<ExpressionPart> left = args;
-			GreatestCommonDivisor argConverted = (GreatestCommonDivisor)arg;
+			LeastCommonMultiple argConverted = (LeastCommonMultiple)arg;
 			for(ExpressionPart i : argConverted.args){
 				boolean hasMatchingArg = false;
 				for(ExpressionPart k : left){

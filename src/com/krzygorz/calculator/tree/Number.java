@@ -58,7 +58,7 @@ public class Number implements ExpressionPart{
 		return 2;
 	}*/
 
-	@Override
+	/*@Override
 	public boolean canBeSimplified() {
 		return false;
 	}
@@ -66,7 +66,7 @@ public class Number implements ExpressionPart{
 	@Override
 	public ExpressionPart simplyfy() {
 		return this;
-	}
+	}*/
 
 	@Override
 	public boolean matches(ExpressionPart arg) {

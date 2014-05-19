@@ -15,14 +15,37 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.tree;
+package com.krzygorz.calculator.misc;
 
-public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
+import java.util.HashMap;
+
+public final class SettingsManager {
 	
-	//TODO Object tryToTransform(ExpressionPart dest)
-	//public ExpressionPart nextStepToSimplyfy();
-	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);
+	private static HashMap<String, String> settings = new HashMap<String, String>();
+	
+	private SettingsManager() {
+		
+	}
+
+	public static HashMap<String, String> getSettings() {
+		return settings;
+	}
+	
+	public static String getSetting(String key){
+		return settings.get(key);
+	}
+
+	public static void setSetting(String key, String setting) {
+		SettingsManager.settings.put(key, setting);
+	}
+	
+	public static void loadSettings(String[] args){
+		for(String i : args){
+			if(i.split("=").length < 2){
+				settings.put(i, "1");
+			}else{
+				settings.put(i.split("=")[0], i.split("=")[1]);
+			}
+		}
+	}
 }

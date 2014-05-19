@@ -61,7 +61,7 @@ public class GreatestCommonDivisor implements ExpressionPart {
 		this.args.add(arg);
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		
 		return true;
@@ -87,7 +87,7 @@ public class GreatestCommonDivisor implements ExpressionPart {
 		}
 				
 		return null;
-	}*/
+	}
 	
 	@Override public String toString(){
 		String returnVal = "gcd(";

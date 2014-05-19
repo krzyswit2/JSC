@@ -42,7 +42,7 @@ public class LeastCommonMultiple implements ExpressionPart {
 		this.args.add(arg);
 	}
 
-	@Override
+	/*@Override
 	public boolean canBeSimplified() {
 		
 		return true;
@@ -51,7 +51,7 @@ public class LeastCommonMultiple implements ExpressionPart {
 	@Override
 	public ExpressionPart simplyfy() {
 		return new Division(new Multiplication(args), new GreatestCommonDivisor(args)).simplyfy();
-	}
+	}*/
 	
 	@Override public String toString(){
 		String returnVal = "lcm(";

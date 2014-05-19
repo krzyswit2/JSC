@@ -29,11 +29,6 @@ public class Multiplication implements ExpressionPart{
 	public Multiplication() {
 		factors = new Vector<ExpressionPart>();
 	}
-	public Multiplication(ExpressionPart arg){
-		if(arg instanceof Multiplication){
-			this.factors = ((Multiplication) arg).getFactors();
-		}
-	}
 	
 	public Multiplication(Vector<ExpressionPart> addends){
 		this.factors = addends;
@@ -50,7 +45,7 @@ public class Multiplication implements ExpressionPart{
 	public int getType() {
 		return 0;
 	}*/
-	/*rivate ExpressionPart multiplyTwoArgs(ExpressionPart factor1, ExpressionPart factor2){
+	private ExpressionPart multiplyTwoArgs(ExpressionPart factor1, ExpressionPart factor2){
 		if(factor1 == null){
 			return factor2;
 		}
@@ -142,7 +137,11 @@ public class Multiplication implements ExpressionPart{
 		return null;
 	}
 	
-	
+	public void addFactor(ExpressionPart factor){
+		//if(factor != null){
+		factors.add(factor);
+		//}
+	}
 	
 
 	@Override
@@ -203,7 +202,7 @@ public class Multiplication implements ExpressionPart{
 			return retValue;
 		}
 		return null;
-	}*/
+	}
 	
 	@Override
 	public String toString(){
@@ -224,12 +223,6 @@ public class Multiplication implements ExpressionPart{
 		}
 		
 		return returnVal.substring(0, returnVal.length() - 1);
-	}
-	
-	public void addFactor(ExpressionPart factor){
-		//if(factor != null){
-		factors.add(factor);
-		//}
 	}
 
 	@Override

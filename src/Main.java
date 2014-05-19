@@ -51,10 +51,10 @@ public class Main {
 			
 			Module loadedModule = new Arithmetic();
 			
-			while(parsedInput.canBeSimplified() && i < 100){
+			while(loadedModule.canSimplyfy(parsedInput) && i < 100 ){
 				toOutput = toOutput.concat(parsedInput.toString());
 				toOutput = toOutput.concat(" = "); 
-				parsedInput = loadedModule.simplyfy(parsedInput);//parsedInput.simplyfy();
+				parsedInput = loadedModule.simplyfy(parsedInput);
 				i++;
 			}
 			toOutput = toOutput.concat(parsedInput.toString());

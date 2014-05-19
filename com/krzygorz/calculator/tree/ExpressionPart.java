@@ -18,9 +18,8 @@
 package com.krzygorz.calculator.tree;
 
 public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
-	
+	public ExpressionPart simplyfy();
+	public boolean canBeSimplified();
 	//TODO Object tryToTransform(ExpressionPart dest)
 	//public ExpressionPart nextStepToSimplyfy();
 	//FIXME boolean hasStruct(ExpressionPart arg)

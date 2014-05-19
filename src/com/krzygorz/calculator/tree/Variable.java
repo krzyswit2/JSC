@@ -33,14 +33,14 @@ public class Variable implements ExpressionPart{
 		this.name = name;
 	}
 	
-	@Override
+	/*@Override
 	public boolean canBeSimplified() {
 		return false;
 	}
 	@Override
 	public ExpressionPart simplyfy() {
 		return this;
-	}
+	}*/
 	
 	@Override
 	public String toString(){

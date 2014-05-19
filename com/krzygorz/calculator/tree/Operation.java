@@ -17,12 +17,14 @@
  */
 package com.krzygorz.calculator.tree;
 
-public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
+public abstract class Operation {//operacje implementuja to(moze dac jako interfejs)
 	
-	//TODO Object tryToTransform(ExpressionPart dest)
-	//public ExpressionPart nextStepToSimplyfy();
-	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);
+	public static boolean isInteger(double number){//used in gcd
+		if((number % 1) == 0){
+			return true;
+		}
+		return false;
+	}
+	
+
 }

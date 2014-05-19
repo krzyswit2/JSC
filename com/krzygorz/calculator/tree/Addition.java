@@ -45,7 +45,7 @@ public class Addition implements ExpressionPart{
 	public int getType() {
 		return 0;
 	}*/
-	/*private ExpressionPart addTwoArgs(ExpressionPart addend1, ExpressionPart addend2){//FIXME usunac klase Substraction i zastapic ja dodawaniem liczb ujemnych
+	private ExpressionPart addTwoArgs(ExpressionPart addend1, ExpressionPart addend2){//FIXME usunac klase Substraction i zastapic ja dodawaniem liczb ujemnych
 		if(addend1 == null){
 			return addend2;
 		}
@@ -98,6 +98,19 @@ public class Addition implements ExpressionPart{
 			return new Addition(addend1, addend2);
 		}
 		return null;
+	}
+	
+	public void addAddend(ExpressionPart addend){
+		addends.add(addend);
+	}
+	
+
+	@Override
+	public boolean canBeSimplified() {
+		if(this.simplyfy().matches(this)){
+			return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -152,19 +165,7 @@ public class Addition implements ExpressionPart{
 		}
 		return null;
 	}
-	
-	@Override
-	public boolean canBeSimplified() {
-		if(this.simplyfy().matches(this)){
-			return false;
-		}
-		return true;
-	}*/
-	
-	public void addAddend(ExpressionPart addend){
-		addends.add(addend);
-	}
-	
+
 	@Override
 	public String toString(){
 		String returnVal = "";

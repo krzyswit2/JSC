@@ -15,14 +15,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.tree;
+package com.krzygorz.calculator.misc;
 
-public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
+import java.util.Vector;
+
+public class Logger {
+
+	private Vector<LoggingInterface> outputs = new Vector<LoggingInterface>();
 	
-	//TODO Object tryToTransform(ExpressionPart dest)
-	//public ExpressionPart nextStepToSimplyfy();
-	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);
+	public void log(String message){
+		for(LoggingInterface i : outputs){
+			i.Log(message);
+		}
+	}
+	
+	public void addLogger(LoggingInterface arg){
+		this.outputs.add(arg);
+	}
+
 }

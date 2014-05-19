@@ -31,7 +31,7 @@ public class Exponentiation implements ExpressionPart {
 		this.exponent = exponent;
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		if(this.matches(this.simplyfy())){
 			return false;
@@ -53,7 +53,7 @@ public class Exponentiation implements ExpressionPart {
 			tmpexponent = exponent.simplyfy();
 		}
 		return this;
-	}*/
+	}
 
 	@Override
 	public boolean matches(ExpressionPart arg) {

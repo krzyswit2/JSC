@@ -15,14 +15,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.krzygorz.calculator.tree;
+package com.krzygorz.calculator.misc;
 
-public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
-	
-	//TODO Object tryToTransform(ExpressionPart dest)
-	//public ExpressionPart nextStepToSimplyfy();
-	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);
+public interface LoggingInterface {
+	void Log(String message);
 }

@@ -24,7 +24,6 @@ public class Division implements ExpressionPart{
 	
 	private ExpressionPart dividend;//dzielnik
 	private ExpressionPart divisor;//dzielna
-	//to w sumie chyba jest na odwrot, nie wiem
 	
 	public Division() {}
 	
@@ -33,7 +32,7 @@ public class Division implements ExpressionPart{
 		this.divisor = divisor;
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		if(this.simplyfy().matches(this)){
 			return false;
@@ -119,7 +118,7 @@ public class Division implements ExpressionPart{
 		}
 		return this;
 		
-	}*/
+	}
 	
 	@Override
 	public String toString(){

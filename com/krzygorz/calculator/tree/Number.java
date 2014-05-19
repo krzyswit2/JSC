@@ -17,21 +17,48 @@
  */
 package com.krzygorz.calculator.tree;
 
-//TODO gdy nie wiadomo jak cos zrobic, zajzec do zestawu rownan, i sprobowac je przeksztalcic
-public class Equation implements ExpressionPart{
-	private ExpressionPart side1;
-	private ExpressionPart side2;
-	
-	public Equation() {
-		
-	}
-	
-	public Equation(ExpressionPart side1, ExpressionPart side2) {
-		this.side1 = side1;
-		this.side1 = side2;
-	}
+public class Number implements ExpressionPart{
+	private double value;
 
+	public Number(double value){
+		this.value = value;
+	}
+	
+	public Number(){
+		this.value = 0;
+	}
+	
+	public void setValue(double value) {
+		this.value = value;
+	}
+	
+	public double getValue(){
+		return value;
+	}
+	@Override
+	public String toString(){
+		String retValue = "";
+		if(this.value < 0){
+			retValue = retValue.concat("(");
+		}
+		if((value % 1) == 0){
+			retValue = retValue.concat(String.valueOf((int)value));
+		}else{
+			retValue = retValue.concat(String.valueOf(value));
+		}
+		
+		if(this.value < 0){
+			retValue = retValue.concat(")");
+		}
+		return retValue;
+	}
+	
 	/*@Override
+	public int getType() {
+		return 2;
+	}*/
+
+	@Override
 	public boolean canBeSimplified() {
 		return false;
 	}
@@ -39,34 +66,14 @@ public class Equation implements ExpressionPart{
 	@Override
 	public ExpressionPart simplyfy() {
 		return this;
-	}*/
-	
-	public ExpressionPart getSide1() {
-		return side1;
-	}
-	public void setSide1(ExpressionPart side1) {
-		this.side1 = side1;
-	}
-	public ExpressionPart getSide2() {
-		return side2;
-	}
-	public void setSide2(ExpressionPart side2) {
-		this.side2 = side2;
-	}
-	
-	@Override
-	public String toString(){
-		if(side1 != null && side2 != null){
-			return side1.toString().concat("=").concat(side2.toString());
-		}
-		return "null !";
 	}
 
 	@Override
 	public boolean matches(ExpressionPart arg) {
-		if(arg instanceof Equation && (((Equation)arg).getSide1() == this.getSide1()) && (((Equation)arg).getSide2() == this.getSide2())){
+		if(arg instanceof Number && (((Number)arg).getValue() == this.getValue())){
 			return true;
 		}
 		return false;
 	}
+
 }

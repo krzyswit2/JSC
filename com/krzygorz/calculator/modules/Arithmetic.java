@@ -3,7 +3,6 @@ package com.krzygorz.calculator.modules;
 import java.util.Vector;
 
 import com.krzygorz.calculator.tree.Addition;
-import com.krzygorz.calculator.tree.Division;
 import com.krzygorz.calculator.tree.ExpressionPart;
 import com.krzygorz.calculator.tree.Multiplication;
 import com.krzygorz.calculator.tree.Number;
@@ -16,7 +15,7 @@ public class Arithmetic implements Module {
 		Vector<ExpressionPart> addends = arg.getAddends();
 		for(ExpressionPart i : addends){
 			//System.out.println("current arg: " + arg.toString());
-			if(canSimplyfy(i)){
+			if(i.canBeSimplified()){
 				isLast = false;
 				break;
 			}
@@ -62,9 +61,9 @@ public class Arithmetic implements Module {
 		}else{
 			Addition retValue = new Addition();
 			for(ExpressionPart tmp : addends){
-				if(!(tmp instanceof Number) && canSimplyfy(tmp)){
+				if(!(tmp instanceof Number) && tmp.canBeSimplified()){
 					//System.out.println("next NaN arg: " + tmp);
-					tmp = simplyfy(tmp);
+					tmp = tmp.simplyfy();
 				}
 				retValue.addAddend(tmp);
 			}
@@ -76,6 +75,14 @@ public class Arithmetic implements Module {
 	private ExpressionPart simplyfyMultiplication(Multiplication arg){
 		boolean isLast = true;
 		Vector<ExpressionPart> factors = arg.getFactors();
+		for(ExpressionPart i : factors){
+			if(i.canBeSimplified()){
+				isLast = false;
+				break;
+			}
+		}
+		
+		if(isLast){
 			if(factors != null){
 				if(factors.size() > 1){
 					Vector<ExpressionPart> toMultiply = factors;
@@ -112,62 +119,36 @@ public class Arithmetic implements Module {
 					return factors.get(0);
 				}
 			}
+		}else{
 			Multiplication retValue = new Multiplication();
 			for(ExpressionPart tmp : factors){
-				if(canSimplyfy(tmp)){
+				if(tmp.canBeSimplified()){
 					//System.out.println("next NaN arg: " + tmp);
-					tmp = simplyfy(tmp);
+					tmp = tmp.simplyfy();
 				}
 				retValue.addFactor(tmp);
 			}
 			return retValue;
-		//return null;
+		}
+		return null;
 	}
 	private ExpressionPart simplyfySubstraction(Substraction arg){
 		if(arg.getMinuend() instanceof Number && arg.getSubtrahend() instanceof Number){
 			return new Number(((Number)arg.getMinuend()).getValue() - ((Number)arg.getSubtrahend()).getValue());
 		}
-		if(canSimplyfy(arg.getMinuend())){
+		if(arg.getMinuend().canBeSimplified()){
 			arg.setMinuend(simplyfy(arg.getMinuend()));
 		}
-		if(canSimplyfy(arg.getSubtrahend())){
-			arg.setSubtrahend(simplyfy(arg.getSubtrahend()));
-		}
 		return null;
-	}
-	private ExpressionPart simplyfyDivision(Division arg){
-		if(arg.getDividend() instanceof Number && arg.getDivisor() instanceof Number){
-			return new Number(((Number)arg.getDividend()).getValue() / ((Number)arg.getDivisor()).getValue());
-		}
-		if(canSimplyfy(arg.getDividend())){
-			arg.setDividend(simplyfy(arg.getDividend()));
-		}
-		if(canSimplyfy(arg.getDivisor())){
-			arg.setDivisor(simplyfy(arg.getDivisor()));
-		}
-		return null;
-	}
-	@Override
-	public boolean canSimplyfy(ExpressionPart arg){
-		if(arg == null){
-			return false;
-		}
-		ExpressionPart simplifiedArg = simplyfy(arg);
-		if(simplifiedArg != null){
-			return !simplifiedArg.matches(arg);
-		}
-		return false;
 	}
 	@Override
 	public ExpressionPart simplyfy(ExpressionPart arg) {
 		if(arg instanceof Addition)
-			return simplyfyAddition(new Addition(arg));
+			return simplyfyAddition((Addition)arg);
 		if(arg instanceof Multiplication)
-			return simplyfyMultiplication(new Multiplication(arg));
+			return simplyfyMultiplication((Multiplication)arg);
 		if(arg instanceof Substraction)
-			return simplyfySubstraction(new Substraction(arg));
-		if(arg instanceof Division)
-			return simplyfyDivision((Division)arg);
+			return simplyfySubstraction((Substraction)arg);
 		return null;
 	}
 

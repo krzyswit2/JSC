@@ -17,12 +17,40 @@
  */
 package com.krzygorz.calculator.tree;
 
-public interface ExpressionPart {
-	//public ExpressionPart simplyfy();//do usuniecia
-	//public boolean canBeSimplified();
+public class Variable implements ExpressionPart{
+	private String name;
+	public Variable() {
+		name = "";
+	}
+	public Variable(String name){
+		this.name = name;
+	}
 	
-	//TODO Object tryToTransform(ExpressionPart dest)
-	//public ExpressionPart nextStepToSimplyfy();
-	//FIXME boolean hasStruct(ExpressionPart arg)
-	public boolean matches(ExpressionPart arg);
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public boolean canBeSimplified() {
+		return false;
+	}
+	@Override
+	public ExpressionPart simplyfy() {
+		return this;
+	}
+	
+	@Override
+	public String toString(){
+		return this.name;
+	}
+	@Override
+	public boolean matches(ExpressionPart arg) {
+		if(arg instanceof Variable && (((Variable)arg).getName().equals(this.getName()))){
+			return true;
+		}
+		return false;
+	}
 }

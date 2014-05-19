@@ -32,7 +32,7 @@ public class Substraction implements ExpressionPart{
 		this.subtrahend = substrahend;
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		if(this.simplyfy().matches(this)){
 			return false;
@@ -93,15 +93,8 @@ public class Substraction implements ExpressionPart{
 		}
 		
 		return new Substraction(tmpMinuend, tmpSubtrahend);
-	}*/
-	
-	public Substraction(ExpressionPart arg) {
-		if(arg instanceof Substraction){
-			this.minuend = ((Substraction) arg).getMinuend();
-			this.subtrahend = ((Substraction) arg).getSubtrahend();
-		}
 	}
-
+	
 	@Override
 	public String toString(){
 		//String convertedNumerator = numerator.toString();

@@ -18,7 +18,7 @@
 package com.krzygorz.calculator.tree;
 
 //TODO gdy nie wiadomo jak cos zrobic, zajzec do zestawu rownan, i sprobowac je przeksztalcic
-public class Equation implements ExpressionPart{
+public class Equation implements ExpressionPart{//my current objective
 	private ExpressionPart side1;
 	private ExpressionPart side2;
 	
@@ -31,7 +31,7 @@ public class Equation implements ExpressionPart{
 		this.side1 = side2;
 	}
 
-	/*@Override
+	@Override
 	public boolean canBeSimplified() {
 		return false;
 	}
@@ -39,7 +39,7 @@ public class Equation implements ExpressionPart{
 	@Override
 	public ExpressionPart simplyfy() {
 		return this;
-	}*/
+	}
 	
 	public ExpressionPart getSide1() {
 		return side1;

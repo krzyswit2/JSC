@@ -72,11 +72,11 @@ public class CalculatorWindow extends JFrame implements ActionListener, LoggingI
 				ExpressionPart parsedInput = parser.parseString(input.getText());
 				System.out.println("result tree: " + parsedInput.toString());
 				String toOutput = "";
-				/*while(parsedInput.canBeSimplified()){
+				while(parsedInput.canBeSimplified()){
 					toOutput = toOutput.concat(parsedInput.toString());
 					toOutput = toOutput.concat(" = ");
 					parsedInput = parsedInput.simplyfy();
-				}*/
+				}
 				toOutput = toOutput.concat(parsedInput.toString());
 				outputArea.setText(toOutput);
 				

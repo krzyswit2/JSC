@@ -1,6 +1,6 @@
 JSC - Java Scientific Calculator
 ===
 
-##TODO:
-+equations
-+better parser
+####TODO:  
++ equations
++ better parser

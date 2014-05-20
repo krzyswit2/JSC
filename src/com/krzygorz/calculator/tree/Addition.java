@@ -30,12 +30,20 @@ public class Addition implements ExpressionPart{
 		addends = new Vector<ExpressionPart>();
 	}
 	
+	public Addition(ExpressionPart arg){
+		if(arg instanceof Addition){
+			this.addends = ((Addition) arg).getAddends();
+		}
+	}
+	
 	public Addition(Vector<ExpressionPart> addends){
 		this.addends = addends;
 	}
 	
-	public Addition(ExpressionPart... addends){
+	public Addition(ExpressionPart addend1, ExpressionPart addend2, ExpressionPart... addends){
 		this.addends = new Vector<ExpressionPart>();
+		this.addends.add(addend1);
+		this.addends.add(addend2);
 		for(ExpressionPart i : addends){
 			this.addends.add(i);
 		}

@@ -19,6 +19,8 @@ package com.krzygorz.calculator.tree;
 
 public abstract class Operation {//operacje implementuja to(moze dac jako interfejs)
 	
+	//public static void getArg
+	
 	public static boolean isInteger(double number){//used in gcd
 		if((number % 1) == 0){
 			return true;

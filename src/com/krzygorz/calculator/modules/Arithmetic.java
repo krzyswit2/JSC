@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import com.krzygorz.calculator.tree.Addition;
 import com.krzygorz.calculator.tree.Division;
+import com.krzygorz.calculator.tree.Exponentiation;
 import com.krzygorz.calculator.tree.ExpressionPart;
 import com.krzygorz.calculator.tree.Multiplication;
 import com.krzygorz.calculator.tree.Number;
@@ -63,7 +64,7 @@ public class Arithmetic implements Module {
 				return addends.get(0);
 			}
 		}
-		return null;
+		return arg;
 	}
 
 	private ExpressionPart simplyfyMultiplication(Multiplication arg){
@@ -131,7 +132,7 @@ public class Arithmetic implements Module {
 		if(changed){
 			return arg;
 		}
-		return null;
+		return arg;
 	}
 	private ExpressionPart simplyfyDivision(Division arg){
 		if(arg.getDividend() instanceof Number && arg.getDivisor() instanceof Number){
@@ -143,7 +144,19 @@ public class Arithmetic implements Module {
 		if(canSimplyfy(arg.getDivisor())){
 			arg.setDivisor(simplyfy(arg.getDivisor()));
 		}
-		return null;
+		return arg;
+	}
+	private ExpressionPart simplyfyExponentiation(Exponentiation arg){
+		if(arg.getBase() instanceof Number && arg.getExponent() instanceof Number){
+			return new Number(Math.pow(((Number)arg.getBase()).getValue(), ((Number)arg.getExponent()).getValue()));
+		}
+		if(canSimplyfy(arg.getBase())){
+			arg.setBase(simplyfy(arg.getBase()));
+		}
+		if(canSimplyfy(arg.getExponent())){
+			arg.setExponent(simplyfy(arg.getExponent()));
+		}
+		return arg;
 	}
 	@Override
 	public boolean canSimplyfy(ExpressionPart arg){
@@ -166,6 +179,8 @@ public class Arithmetic implements Module {
 			return simplyfySubstraction(new Substraction(arg));
 		if(arg instanceof Division)
 			return simplyfyDivision((Division)arg);
+		if(arg instanceof Exponentiation)
+			return simplyfyExponentiation((Exponentiation)arg);
 		return null;
 	}
 

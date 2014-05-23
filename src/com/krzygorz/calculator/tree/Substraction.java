@@ -17,8 +17,6 @@
  */
 package com.krzygorz.calculator.tree;
 
-import com.krzygorz.calculator.misc.SettingsManager;
-import com.krzygorz.calculator.parser.MathParser;
 
 public class Substraction implements ExpressionPart{
 	

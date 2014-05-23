@@ -19,8 +19,6 @@ package com.krzygorz.calculator.tree;
 
 import java.util.Vector;
 
-import com.krzygorz.calculator.parser.MathParser;
-
 public class GreatestCommonDivisor implements ExpressionPart {
 	private Vector<ExpressionPart> args;
 	

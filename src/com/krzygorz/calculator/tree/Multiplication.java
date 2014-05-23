@@ -19,9 +19,6 @@ package com.krzygorz.calculator.tree;
 
 import java.util.Vector;
 
-import com.krzygorz.calculator.misc.SettingsManager;
-import com.krzygorz.calculator.parser.MathParser;
-
 public class Multiplication implements ExpressionPart{
 	
 	private Vector<ExpressionPart> factors; //czynniki

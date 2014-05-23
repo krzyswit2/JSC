@@ -18,11 +18,8 @@
 
 package com.krzygorz.calculator.gui;
 
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -33,6 +30,7 @@ import com.krzygorz.calculator.misc.LoggingInterface;
 import com.krzygorz.calculator.parser.MathParser;
 import com.krzygorz.calculator.tree.ExpressionPart;
 
+@SuppressWarnings("serial")
 public class CalculatorWindow extends JFrame implements ActionListener, LoggingInterface{//I'm not using it, becouse I don't need gui now
 	private JTextField input = new JTextField("enter expression here");
 	private JTextArea outputArea = new JTextArea();

@@ -21,7 +21,7 @@ import com.krzygorz.calculator.parser.MathParser;
 
 public class Fraction implements ExpressionPart {
 
-	private ExpressionPart numerator;//liczebnik
+	private ExpressionPart numerator;//licznik
 	private ExpressionPart denominator;//mianownik
 	private boolean isPositive;
 	private boolean isSignChecked;
@@ -61,7 +61,7 @@ public class Fraction implements ExpressionPart {
 	}
 	
 	@Override
-	public ExpressionPart simplyfy() {//TODO skracanie ulamkow pietrowych(robota dla tryToTransform) typu (1\4)\2 = (4/4)\8 = 1\8 lub (1\4)\2 = (1\4)*(1\2) = (1\8)
+	public ExpressionPart simplyfy() {
 		ExpressionPart tmpNumerator = numerator;
 		ExpressionPart tmpDenominator = denominator;
 		
@@ -90,6 +90,22 @@ public class Fraction implements ExpressionPart {
 				return new Fraction(numeratorConverted, denominatorConverted).simplyfy();
 			}
 			
+		}
+		
+		if(tmpNumerator instanceof Fraction && tmpDenominator instanceof Fraction){
+			Fraction tmpNumeratorConverted = (Fraction)tmpNumerator;
+			Fraction tmpDenominatorConverted = (Fraction)tmpDenominator;
+			return new Fraction(new Multiplication(tmpNumeratorConverted.numerator, tmpDenominatorConverted.denominator), new Multiplication(tmpNumeratorConverted.denominator, tmpDenominatorConverted.numerator));
+		}
+		
+		if(tmpNumerator instanceof Fraction){
+			Fraction tmpNumeratorConverted = (Fraction)tmpNumerator;
+			return new Fraction(tmpNumeratorConverted.numerator, new Multiplication(tmpNumeratorConverted.denominator, tmpDenominator));
+		}
+		
+		if(tmpDenominator instanceof Fraction){
+			Fraction tmpDenominatorConverted = (Fraction)tmpDenominator;
+			return new Fraction(new Multiplication(tmpDenominatorConverted.denominator, tmpNumerator), tmpDenominatorConverted.numerator);
 		}
 		
 		if(tmpDenominator instanceof Number){
@@ -250,7 +266,21 @@ public class Fraction implements ExpressionPart {
 			}
 		}
 		
+		if(tmpNumerator instanceof Fraction && tmpDenominator instanceof Fraction){
+			Fraction tmpNumeratorConverted = (Fraction)tmpNumerator;
+			Fraction tmpDenominatorConverted = (Fraction)tmpDenominator;
+			return new Fraction(new Multiplication(tmpNumeratorConverted.numerator, tmpDenominatorConverted.denominator), new Multiplication(tmpNumeratorConverted.denominator, tmpDenominatorConverted.numerator));
+		}
 		
+		if(tmpNumerator instanceof Fraction){
+			Fraction tmpNumeratorConverted = (Fraction)tmpNumerator;
+			return new Fraction(tmpNumeratorConverted.numerator, new Multiplication(tmpNumeratorConverted.denominator, tmpDenominator));
+		}
+		
+		if(tmpDenominator instanceof Fraction){
+			Fraction tmpDenominatorConverted = (Fraction)tmpDenominator;
+			return new Fraction(new Multiplication(tmpDenominatorConverted.denominator, tmpNumerator), tmpDenominatorConverted.numerator);
+		}
 		
 		Fraction retValue = new Fraction();
 		retValue.setNumerator(tmpNumerator);
